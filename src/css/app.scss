@@ -1,1 +1,109 @@
 // app global css in SCSS form
+//Style for HomePage
+.header {
+  min-height: 80px;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+.title-header {
+  display: flex;
+  justify-content: center;
+}
+::-webkit-scrollbar {
+  display: none;
+}
+.item-style {
+  border-radius: 10px;
+}
+.progress-bar {
+  border-radius: 15px;
+}
+.btn-add {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  border: solid 1.5px #7286d3;
+}
+.text-modal {
+  color: #4246dc;
+  text-align: center;
+}
+.my-card {
+  width: 100%;
+}
+.btn-modal-left {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  //border-right: solid 1px #1536ba;
+}
+.btn-modal-right {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  border-left: solid 2px #1536ba;
+  margin-left: 0px;
+}
+.btn-container {
+  display: flex;
+  flex-wrap: nowrap;
+  padding: 0;
+  margin: 0;
+}
+.textinput-style {
+  font-size: 20px;
+}
+//Style for CardPage
+.menu-text {
+  color: red;
+}
+.card-container {
+  padding: 10px;
+  width: 100%;
+}
+.card-style {
+  //height: 200px;
+  width: 25%;
+}
+.card-border {
+  border-radius: 10px;
+  //height: 100px;
+}
+.icon-style {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  margin-top: 5px;
+}
+.star-style {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-top: -15px;
+}
+.btn-footer-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.btn-new-card {
+  width: 45%;
+  border-radius: 5px;
+  border: solid 2px #7286d3;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.btn-start-learning {
+  width: 45%;
+  border-radius: 5px;
+  border: solid 2px #7286d3;
+  display: flex;
+}
