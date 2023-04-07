@@ -2,7 +2,7 @@
   <q-page class="q-pa-md">
     <!-- <q-scroll-area class="absolute full-width full-height" visible="false"> -->
     <!-- Header -->
-    <q-header class="bg-indigo-5 header">
+    <q-header class="bg-primary header">
       <q-toolbar>
         <q-toolbar-title class="title-header">Home</q-toolbar-title>
       </q-toolbar>
@@ -37,7 +37,7 @@
       color="#fff"
       label="New Deck"
       class="btn-add item-style q-pa-md text-subtitle1 text-weight-bold"
-      text-color="indigo-5"
+      text-color="primary"
       no-caps
       icon="add_circle_outline"
       unelevated

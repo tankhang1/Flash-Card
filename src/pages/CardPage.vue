@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-sm">
-    <q-header class="bg-indigo-5 header">
+    <q-header class="bg-primary header">
       <q-toolbar>
         <q-btn
           flat
@@ -19,7 +19,7 @@
                 clickable
                 v-close-popup
                 class="q-my-xs"
-                @click="onRenameDeck"
+                @click="showNameDialog = true"
               >
                 <q-item-section class="text-subtitle1"
                   >Rename Deck</q-item-section
@@ -92,13 +92,14 @@
         label="New Card"
         class="btn-new-card text-subtitle1"
         unelevated
-        text-color="indigo-5"
+        text-color="primary"
         no-caps
         icon="add_circle_outline"
+        :to="{ name: 'NewCard' }"
         @click="openModal = !openModal"
       />
       <q-btn
-        color="indigo-5"
+        color="primary"
         text-color="white"
         label="Start Learning"
         class="btn-start-learning text-subtitle1"
@@ -115,6 +116,47 @@
       <q-btn color="primary" label="Primary" @click="onOpenModal" />
     </div> -->
   </q-page>
+  <q-dialog v-model="showNameDialog">
+    <q-card class="my-card">
+      <q-card-section>
+        <div class="col text-h6 ellipsis text-modal">Rename Deck</div>
+        <div class="text-subtitle1 text-modal">
+          Please enter your deck's name
+        </div>
+      </q-card-section>
+      <q-card-section class="q-pt-none">
+        <q-input
+          outlined
+          v-model="newDeckName"
+          :dense="dense"
+          class="textinput-style"
+        />
+      </q-card-section>
+
+      <q-separator spaced="0px" color="primary" />
+
+      <q-card-actions class="q-pa-none btn-container">
+        <q-btn
+          flat
+          color="negative"
+          label="Cancel"
+          class="btn-modal-left"
+          no-caps
+          @click="onCancel"
+          v-close-popup
+        />
+        <q-btn
+          v-close-popup
+          flat
+          color="positive"
+          label="OK"
+          class="btn-modal-right"
+          :disable="saveDisabled"
+          @click="onAddDeck"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
@@ -126,6 +168,9 @@ export default defineComponent({
     id: Object,
   },
   computed: {
+    saveDisabled() {
+      return !this.newDeckName;
+    },
     card() {
       return this.$route.params.id;
     },
@@ -133,6 +178,8 @@ export default defineComponent({
   data() {
     return {
       openModal: false,
+      showNameDialog: false,
+      newDeckName: "",
       CARD: [
         {
           cardName: "Father",
@@ -173,6 +220,7 @@ export default defineComponent({
     },
     onRenameDeck() {
       console.log("onRenameDeck");
+      this.showNameDialog = false;
     },
     onResetDeck() {
       console.log("onResetDeck");

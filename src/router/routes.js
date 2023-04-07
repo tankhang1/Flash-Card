@@ -15,6 +15,11 @@ const routes = [
         name: "CardPage",
         props: true,
       },
+      {
+        path: "/NewCard",
+        component: () => import("src/pages/NewCard.vue"),
+        name: "NewCard",
+      },
     ],
   },
 
