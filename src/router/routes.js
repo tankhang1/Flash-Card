@@ -18,6 +18,23 @@ const routes = [
         component: () => import("src/pages/EditCard.vue"),
         name: "EditCard",
       },
+      { path: "/PageIndex", component: () => import("pages/IndexPage.vue") },
+      {
+        path: "",
+        component: () => import("src/pages/HomePage.vue"),
+        name: "HomePage",
+      },
+      {
+        path: "/CardPage:id",
+        component: () => import("src/pages/CardPage.vue"),
+        name: "CardPage",
+        props: true,
+      },
+      {
+        path: "/NewCard",
+        component: () => import("src/pages/NewCard.vue"),
+        name: "NewCard",
+      },
     ],
   },
 
