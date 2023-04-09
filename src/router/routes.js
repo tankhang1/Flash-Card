@@ -4,16 +4,12 @@ const routes = [
     component: () => import("layouts/MainLayout.vue"),
     children: [
       {
-        path: "/Modal",
-        component: () => import("src/pages/ModalPage.vue"),
-      },
-      {
         path: "/Preview",
         component: () => import("src/pages/PreviewCard.vue"),
         name: "PreviewCard",
       },
       {
-        path: "/Edit",
+        path: "/EditCard",
         component: () => import("src/pages/EditCard.vue"),
         name: "EditCard",
       },
@@ -33,6 +29,16 @@ const routes = [
         path: "/NewCard",
         component: () => import("src/pages/NewCard.vue"),
         name: "NewCard",
+      },
+      {
+        path: "/LearningPage",
+        component: () => import("src/pages/StarLearningPage.vue"),
+        name: "LearningPage",
+      },
+      {
+        path: "/ResultPage",
+        component: () => import("src/pages/ResultPage.vue"),
+        name: "ResultPage",
       },
     ],
   },
