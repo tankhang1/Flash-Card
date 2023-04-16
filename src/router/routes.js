@@ -26,7 +26,7 @@ const routes = [
         props: true,
       },
       {
-        path: "/NewCard",
+        path: "/NewCard:id",
         component: () => import("src/pages/NewCard.vue"),
         name: "NewCard",
       },
@@ -39,6 +39,11 @@ const routes = [
         path: "/ResultPage",
         component: () => import("src/pages/ResultPage.vue"),
         name: "ResultPage",
+      },
+      {
+        path: "/CameraPage",
+        component: () => import("src/pages/CameraPage.vue"),
+        name: "CameraPage",
       },
     ],
   },

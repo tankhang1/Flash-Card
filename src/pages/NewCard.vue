@@ -4,7 +4,7 @@
       <q-toolbar>
         <q-btn dense flat round icon="arrow_back" @click="$router.go(-1)" />
         <q-toolbar-title class="title-header">Home</q-toolbar-title>
-        <q-btn flat round dense icon="done" />
+        <q-btn flat round dense icon="done" @click="addNewCard" />
       </q-toolbar>
     </q-header>
     <q-tabs v-model="activePage" align="left" class="text-primary">
@@ -67,7 +67,13 @@
         <div class="text-subtitle3">Use existing photo from your device</div>
       </q-item>
       <q-separator />
-      <q-item v-close-popup clickable class="justify-center" inset-seperator>
+      <q-item
+        v-close-popup
+        clickable
+        class="justify-center"
+        inset-seperator
+        @click="takePhoto"
+      >
         <div class="text-subtitle3">Take New Photo</div>
       </q-item>
       <q-separator />
@@ -76,19 +82,54 @@
       </q-item>
     </q-card>
   </q-dialog>
+  <q-page-container>
+    <router-view />
+  </q-page-container>
 </template>
 <script>
+import { LocalStorage } from "quasar";
+import { useRoute, useRouter } from "vue-router";
 export default {
   name: "NewCard",
+  props: {
+    id: Object,
+  },
   data() {
     return {
       activePage: "front",
       frontName: "",
+      route: useRoute(),
+      router: useRouter(),
       frontDescription: "",
       backName: "",
       backDescription: "",
       showDialog: false,
     };
+  },
+  mounted() {
+    console.log(this.route.params.id);
+  },
+  methods: {
+    addNewCard() {
+      console.log(this.route);
+      const data = [...LocalStorage.getItem("DECK")];
+      const index = data.findIndex(
+        (value) => value.id === this.route.params.id
+      );
+      console.log(data, this.route.params);
+      const card = {
+        cardName: data.name,
+        isStar: false,
+        isChecked: false,
+        font: {
+          name: "Tan Khang",
+          description: "BB",
+        },
+      };
+    },
+    takePhoto() {
+      this.router.push("/CameraPage");
+    },
   },
 };
 </script>

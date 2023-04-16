@@ -10,7 +10,7 @@
           class="q-mr-sm"
           :to="{ name: 'HomePage' }"
         />
-        <q-toolbar-title class="title-header">English</q-toolbar-title>
+        <q-toolbar-title class="title-header">{{ txtCard }}</q-toolbar-title>
         <!-- btn right -->
         <q-btn flat round dense icon="more_vert">
           <q-menu max-width="250px">
@@ -264,6 +264,7 @@
             label="Cancel"
             no-caps
             style="color: #eb3223; font-size: 16px; width: 48.5%"
+            @click="deleteCancle"
           />
           <q-separator vertical color="indigo-11" />
           <q-btn
@@ -271,6 +272,7 @@
             label="OK"
             no-caps
             style="color: #09a506; font-size: 16px; width: 48.5%"
+            @click="deleteOK"
           />
         </q-card-actions>
       </q-card>
@@ -354,8 +356,7 @@
         text-color="primary"
         no-caps
         icon="add_circle_outline"
-        :to="{ name: 'NewCard' }"
-        @click="openModal = !openModal"
+        @click="newCard"
       />
       <q-btn
         color="primary"
@@ -415,7 +416,9 @@
 </template>
 
 <script>
+import { LocalStorage } from "quasar";
 import { defineComponent } from "vue";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "CardPage",
@@ -433,54 +436,85 @@ export default defineComponent({
   data() {
     return {
       openModal: false,
+      router: useRouter(),
       showNameDialog: false,
       openLearning_7: false,
       openLearning_4: false,
       openOption: false,
       checkDelete: false,
       eachCardOption: false,
-      txtCard: "English",
+      txtCard: "",
       newDeckName: "",
+      dataDeck: [],
       CARD: [
-        {
-          cardName: "Father",
-          isStar: false,
-          isChecked: true,
-        },
-        {
-          cardName: "Father",
-          isStar: false,
-          isChecked: true,
-        },
-        {
-          cardName: "Father",
-          isStar: true,
-          isChecked: true,
-        },
-        {
-          cardName: "Father",
-          isStar: false,
-          isChecked: true,
-        },
-        {
-          cardName: "Father",
-          isStar: true,
-          isChecked: true,
-        },
-        {
-          cardName: "Father",
-          isStar: false,
-          isChecked: false,
-        },
+        // {
+        //   cardName: "Father",
+        //   isStar: false,
+        //   isChecked: true,
+        // },
+        // {
+        //   cardName: "Father",
+        //   isStar: false,
+        //   isChecked: true,
+        // },
+        // {
+        //   cardName: "Father",
+        //   isStar: true,
+        //   isChecked: true,
+        // },
+        // {
+        //   cardName: "Father",
+        //   isStar: false,
+        //   isChecked: true,
+        // },
+        // {
+        //   cardName: "Father",
+        //   isStar: true,
+        //   isChecked: true,
+        // },
+        // {
+        //   cardName: "Father",
+        //   isStar: false,
+        //   isChecked: false,
+        // },
       ],
     };
   },
+  mounted() {
+    let data = LocalStorage.getItem("DECK");
+    let index = [...LocalStorage.getItem("DECK")].findIndex(
+      (value) => value.id === this.$route.params.id
+    );
+    this.dataDeck = data[index];
+    this.txtCard = this.dataDeck.name;
+    this.CARD = data[index].cards ?? [];
+  },
+  updated() {
+    // let data = [...LocalStorage.getItem("DECK")];
+    // let index = [...LocalStorage.getItem("DECK")].findIndex(
+    //   (value) => value.name === this.$route.params.id
+    // );
+    // this.dataDeck = data[index];
+    // this.txtCard = this.dataDeck.name;
+    // console.log("updated", data);
+  },
   methods: {
+    onAddDeck() {
+      let data = LocalStorage.getItem("DECK");
+      let index = [...LocalStorage.getItem("DECK")].findIndex(
+        (value) => value.id === this.$route.params.id
+      );
+      data[index].name = this.newDeckName;
+      this.txtCard = this.newDeckName;
+      LocalStorage.set("DECK", data);
+      console.log("set", data);
+    },
     onOpenModal() {
       console.log(this.$route.params.id);
     },
     onRenameDeck() {
       console.log("onRenameDeck");
+
       this.showNameDialog = false;
     },
     onResetDeck() {
@@ -501,6 +535,24 @@ export default defineComponent({
     cardClick(item, index) {
       console.log(item, index);
       this.eachCardOption = !this.eachCardOption;
+    },
+    deleteCancle() {
+      this.checkDelete != this.checkDelete;
+    },
+    deleteOK() {
+      let data = [...LocalStorage.getItem("DECK")];
+      let index = [...LocalStorage.getItem("DECK")].findIndex(
+        (value) => value.id === this.$route.params.id
+      );
+      data.splice(index, 1);
+      LocalStorage.set("DECK", data);
+      this.router.back();
+    },
+    newCard() {
+      this.router.push({
+        name: "NewCard",
+        params: { id: this.$route.params.id },
+      });
     },
   },
 });

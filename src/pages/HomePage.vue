@@ -14,7 +14,7 @@
         class="item-style shadow-4 q-pa-md q-my-md"
         v-for="(item, index) in DECK"
         :key="index"
-        :to="{ name: 'CardPage', params: { id: item.name } }"
+        :to="{ name: 'CardPage', params: { id: item.id } }"
       >
         <q-item-section>
           <q-item-label class="text-weight-bold text-subtitle1">{{
@@ -38,6 +38,7 @@
       label="New Deck"
       class="btn-add item-style q-pa-md text-subtitle1 text-weight-bold"
       text-color="primary"
+      style="margin-top: 20px"
       no-caps
       icon="add_circle_outline"
       unelevated
@@ -89,9 +90,11 @@
 <script>
 import { defineComponent } from "vue";
 import { ref } from "vue";
+import { LocalStorage, SessionStorage, useQuasar } from "quasar";
 export default defineComponent({
   name: "HomePage",
   setup() {
+    const $q = useQuasar();
     return {
       card: ref(false),
       //txt_modal: ref(""),
@@ -101,33 +104,43 @@ export default defineComponent({
     return {
       txt_modal: "",
       DECK: [
-        {
-          id: 1,
-          name: "Welcome to family!",
-          target: 80,
-          complete: 80,
-          cardCollection: [
-            {
-              cardName: "Father",
-              isStar: false,
-              isChecked: true,
-            },
-          ],
-        },
-        {
-          id: 2,
-          name: "Physics",
-          target: 50,
-          complete: 20,
-        },
-        {
-          id: 3,
-          name: "English",
-          target: 102,
-          complete: 0,
-        },
+        // {
+        //   id: 1,
+        //   name: "Welcome to family!",
+        //   target: 80,
+        //   complete: 80,
+        //   cardCollection: [
+        //     {
+        //       cardName: "Father",
+        //       isStar: false,
+        //       isChecked: true,
+        //     },
+        //   ],
+        // },
+        // {
+        //   id: 2,
+        //   name: "Physics",
+        //   target: 50,
+        //   complete: 20,
+        // },
+        // {
+        //   id: 3,
+        //   name: "English",
+        //   target: 102,
+        //   complete: 0,
+        // },
       ],
     };
+  },
+  mounted() {
+    let listDeck = LocalStorage.getAll();
+    if (listDeck.DECK?.length !== 0) this.DECK = listDeck.DECK;
+
+    // console.log(listDeck.DECK);
+  },
+  updated() {
+    let listDeck = LocalStorage.getAll();
+    if (listDeck.DECK?.length !== 0) this.DECK = listDeck.DECK;
   },
   methods: {
     navigateToCard(item, index) {
@@ -135,18 +148,28 @@ export default defineComponent({
     },
     onCancel() {
       this.txt_modal = "";
-      //this.card = false;
+      this.card = !this.card;
     },
     onAddDeck() {
       if (this.txt_modal !== "") {
         const newCard = {
-          id: 1,
+          id: this.txt_modal + Math.floor(Math.random() * 1000),
           name: this.txt_modal,
           target: 0,
           complete: 0,
         };
-        this.DECK.push(newCard);
+        let preDeck = LocalStorage.getAll();
+
+        if (LocalStorage.getLength() === 0) {
+          LocalStorage.set("DECK", [newCard]);
+        } else {
+          LocalStorage.set("DECK", [...preDeck.DECK, newCard]);
+          console.log(preDeck.DECK);
+        }
+
+        //this.DECK.push(newCard);
         this.txt_modal = "";
+        console.log(LocalStorage.getAll());
       }
     },
   },
