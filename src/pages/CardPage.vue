@@ -298,11 +298,29 @@
           </div>
         </q-card-section>
         <q-card-actions vertical>
-          <q-btn flat no-caps style="font-size: 16px">Delete</q-btn>
-          <q-btn flat no-caps style="font-size: 16px" to="/EditCard"
+          <q-btn flat no-caps style="font-size: 16px" @click="deleteCard"
+            >Delete</q-btn
+          >
+          <q-btn
+            flat
+            no-caps
+            style="font-size: 16px"
+            :to="{
+              name: 'EditCard',
+              params: { id: indexDeck, index: indexClick },
+              props,
+            }"
             >Edit</q-btn
           >
-          <q-btn flat no-caps style="font-size: 16px" to="/Preview"
+          <q-btn
+            flat
+            no-caps
+            style="font-size: 16px"
+            :to="{
+              name: 'PreviewCard',
+              params: { id: indexDeck, index: indexClick },
+              props,
+            }"
             >Preview</q-btn
           >
           <q-btn flat no-caps style="font-size: 16px; color: red">Cancel</q-btn>
@@ -347,7 +365,7 @@
       </q-intersection>
     </div>
     <!-- ButtonFooter -->
-    <div class="btn-footer-container">
+    <div class="btn-footer-container" style="margin-top: 10px">
       <q-btn
         color="#fff"
         label="New Card"
@@ -405,7 +423,7 @@
           label="OK"
           class="btn-modal-right"
           :disable="saveDisabled"
-          @click="onAddDeck"
+          @click="onRenameDeck"
         />
       </q-card-actions>
     </q-card>
@@ -446,6 +464,9 @@ export default defineComponent({
       txtCard: "",
       newDeckName: "",
       dataDeck: [],
+      indexDeck: 0,
+      indexClick: 0,
+
       CARD: [
         // {
         //   cardName: "Father",
@@ -483,45 +504,48 @@ export default defineComponent({
   mounted() {
     let data = LocalStorage.getItem("DECK");
     let index = [...LocalStorage.getItem("DECK")].findIndex(
-      (value) => value.id === this.$route.params.id
+      (value) => String(value.id) === this.$route.params.id
     );
+    this.indexDeck = index;
     this.dataDeck = data[index];
     this.txtCard = this.dataDeck.name;
     this.CARD = data[index].cards ?? [];
   },
-  updated() {
-    // let data = [...LocalStorage.getItem("DECK")];
-    // let index = [...LocalStorage.getItem("DECK")].findIndex(
-    //   (value) => value.name === this.$route.params.id
-    // );
-    // this.dataDeck = data[index];
-    // this.txtCard = this.dataDeck.name;
-    // console.log("updated", data);
-  },
+
   methods: {
-    onAddDeck() {
-      let data = LocalStorage.getItem("DECK");
-      let index = [...LocalStorage.getItem("DECK")].findIndex(
-        (value) => value.id === this.$route.params.id
-      );
-      data[index].name = this.newDeckName;
-      this.txtCard = this.newDeckName;
-      LocalStorage.set("DECK", data);
-      console.log("set", data);
-    },
     onOpenModal() {
       console.log(this.$route.params.id);
     },
     onRenameDeck() {
-      console.log("onRenameDeck");
+      let data = LocalStorage.getItem("DECK");
+
+      data[this.indexDeck].name = this.newDeckName;
+      this.txtCard = this.newDeckName;
+      LocalStorage.set("DECK", data);
 
       this.showNameDialog = false;
     },
     onResetDeck() {
-      console.log("onResetDeck");
+      let data = LocalStorage.getItem("DECK");
+
+      data[this.indexDeck].cards.forEach((element) => {
+        element.isChecked = false;
+      });
+      this.CARD.forEach((element) => {
+        element.isChecked = false;
+      });
+      LocalStorage.set("DECK", data);
     },
     onDeleteDeck() {
       this.checkDelete = !this.checkDelete;
+    },
+    deleteCard() {
+      console.log("DEETE");
+      this.eachCardOption = !this.eachCardOption;
+      let data = LocalStorage.getItem("DECK");
+      data[this.indexDeck].cards.splice(this.indexClick, 1);
+      LocalStorage.set("DECK", data);
+      this.CARD = data[this.indexDeck].cards;
     },
     onClick() {
       console.log("onClick");
@@ -533,20 +557,20 @@ export default defineComponent({
       this.openOption = !this.openOption;
     },
     cardClick(item, index) {
-      console.log(item, index);
+      this.indexClick = index;
+
       this.eachCardOption = !this.eachCardOption;
     },
     deleteCancle() {
-      this.checkDelete != this.checkDelete;
+      this.checkDelete = false;
     },
     deleteOK() {
       let data = [...LocalStorage.getItem("DECK")];
-      let index = [...LocalStorage.getItem("DECK")].findIndex(
-        (value) => value.id === this.$route.params.id
-      );
-      data.splice(index, 1);
+
+      data.splice(this.indexDeck, 1);
       LocalStorage.set("DECK", data);
       this.router.back();
+      this.checkDelete = false;
     },
     newCard() {
       this.router.push({
@@ -554,6 +578,13 @@ export default defineComponent({
         params: { id: this.$route.params.id },
       });
     },
+    // navigatePreview() {
+    //   console.log("Card Page", this.cardData);
+    //   this.router.push({
+    //     name: "PreviewCard",
+    //     params: { cardData: this.cardData },
+    //   });
+    // },
   },
 });
 </script>

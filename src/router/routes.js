@@ -4,12 +4,12 @@ const routes = [
     component: () => import("layouts/MainLayout.vue"),
     children: [
       {
-        path: "/Preview",
+        path: "/Preview:id:index",
         component: () => import("src/pages/PreviewCard.vue"),
         name: "PreviewCard",
       },
       {
-        path: "/EditCard",
+        path: "/EditCard:id:index",
         component: () => import("src/pages/EditCard.vue"),
         name: "EditCard",
       },

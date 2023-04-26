@@ -103,40 +103,13 @@ export default defineComponent({
   data() {
     return {
       txt_modal: "",
-      DECK: [
-        // {
-        //   id: 1,
-        //   name: "Welcome to family!",
-        //   target: 80,
-        //   complete: 80,
-        //   cardCollection: [
-        //     {
-        //       cardName: "Father",
-        //       isStar: false,
-        //       isChecked: true,
-        //     },
-        //   ],
-        // },
-        // {
-        //   id: 2,
-        //   name: "Physics",
-        //   target: 50,
-        //   complete: 20,
-        // },
-        // {
-        //   id: 3,
-        //   name: "English",
-        //   target: 102,
-        //   complete: 0,
-        // },
-      ],
+      DECK: [],
     };
   },
   mounted() {
     let listDeck = LocalStorage.getAll();
+    console.log(listDeck);
     if (listDeck.DECK?.length !== 0) this.DECK = listDeck.DECK;
-
-    // console.log(listDeck.DECK);
   },
   updated() {
     let listDeck = LocalStorage.getAll();
@@ -153,18 +126,19 @@ export default defineComponent({
     onAddDeck() {
       if (this.txt_modal !== "") {
         const newCard = {
-          id: this.txt_modal + Math.floor(Math.random() * 1000),
+          id: Math.floor(Math.random() * 100000000),
           name: this.txt_modal,
           target: 0,
           complete: 0,
         };
-        let preDeck = LocalStorage.getAll();
+        let preDeck = LocalStorage.has("DECK");
 
-        if (LocalStorage.getLength() === 0) {
+        if (preDeck === false) {
           LocalStorage.set("DECK", [newCard]);
         } else {
-          LocalStorage.set("DECK", [...preDeck.DECK, newCard]);
-          console.log(preDeck.DECK);
+          let data = LocalStorage.getItem("DECK");
+          console.log(data);
+          LocalStorage.set("DECK", [...data, newCard]);
         }
 
         //this.DECK.push(newCard);

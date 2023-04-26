@@ -1,21 +1,32 @@
 <template>
   <q-page>
-    <div class="q-pa-md">
-      <!-- <img
+    <div
+      class="q-pa-md"
+      style="
+        border: 2px solid black;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        border-radius: 15px;
+      "
+    >
+      <video
         class="full-width"
-        src="https://i2-vnexpress.vnecdn.net/2016/03/02/2-b1-a1-7612-1456906706.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=UOF9fo0yT4JKXvGf_kRHlQ"
-      /> -->
-      <video class="full-width" autoplay ref="video"></video>
-      <canvas ref="canvas" class="full-width" height="240px"></canvas>
+        autoplay
+        ref="video"
+        v-show="!imageCaptured"
+      ></video>
+      <canvas
+        ref="canvas"
+        class="full-width"
+        height="240px"
+        width="100%"
+        v-show="imageCaptured"
+      ></canvas>
     </div>
-    <div class="text-center">
-      <q-btn
-        label="Take a picture"
-        icon="camera"
-        color="primary"
-        @click="captureImage"
-      />
-    </div>
+
     <q-file
       outlined
       v-model="imageUpload"
@@ -32,12 +43,11 @@
 </template>
 <script>
 import { ref, withCtx } from "vue";
-// require("md-gum-polyfill");
 export default {
   name: "CameraPage",
   data() {
     return {
-      imageCaptured: true,
+      imageCaptured: false,
       imageUrl: "",
       imageUpload: [],
     };
@@ -53,16 +63,23 @@ export default {
         });
     },
     captureImage() {
-      let video = this.$refs.video;
-      let canvas = this.$refs.canvas;
-      canvas.width = video.getBoundingClientRect().width;
-      canvas.height = video.getBoundingClientRect().height;
+      if (this.imageCaptured === false) {
+        let video = this.$refs.video;
+        let canvas = this.$refs.canvas;
+        canvas.width = video.getBoundingClientRect().width;
+        canvas.height = video.getBoundingClientRect().height;
 
-      let context = canvas.getContext("2d");
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      this.imageCaptured = true;
-      this.imageUrl = this.dataURItoBlob(canvas.toDataURL());
-      console.log(this.imageUrl);
+        let context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        this.imageCaptured = true;
+        this.imageUrl = this.dataURItoBlob(canvas.toDataURL());
+        this.imageCaptured = true;
+        this.disableCamera();
+      } else {
+        this.imageCaptured = false;
+        this.initCamera();
+      }
+
       // this.disableCamera();
     },
     captureImageFallBack(file) {
@@ -82,7 +99,7 @@ export default {
         };
         img.src = event.target.result;
       };
-      reader.readAsDataURL(file.target.files);
+      reader.readAsDataURL(file.target.files[0]);
     },
     disableCamera() {
       this.$refs.video.srcObject.getVideoTracks().forEach((track) => {
