@@ -31,12 +31,12 @@ const routes = [
         name: "NewCard",
       },
       {
-        path: "/LearningPage",
+        path: "/LearningPage:index:front:type:numberOption",
         component: () => import("src/pages/StarLearningPage.vue"),
         name: "LearningPage",
       },
       {
-        path: "/ResultPage",
+        path: "/ResultPage:indexDeck",
         component: () => import("src/pages/ResultPage.vue"),
         name: "ResultPage",
       },

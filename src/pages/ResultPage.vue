@@ -11,7 +11,7 @@
     <div style="display: flex; justify-content: center; margin-top: 25px">
       <q-knob
         :min="0"
-        :max="100"
+        :max="50"
         v-model="result"
         show-value
         size="200px"
@@ -22,15 +22,16 @@
         readonly
       >
         <div style="color: #7286d3">
-          {{ result }}%
+          {{ Math.floor((this.currentCard / this.numberCard) * 100) }}%
           <p style="font-size: 16px; text-align: center; color: #09a506">
-            64/80
+            {{ this.currentCard }}/{{ this.numberCard }}
           </p>
         </div>
       </q-knob>
     </div>
 
     <q-btn
+      @click="reStartUndoneCard"
       label="Restart Undone Cards"
       style="
         background-color: #7286d3;
@@ -56,6 +57,7 @@
         margin-right: auto;
         display: flex;
       "
+      @click="reStartAllCard"
       no-caps
     />
     <q-btn
@@ -81,14 +83,52 @@
   </q-layout>
 </template>
 <script>
+import { LocalStorage } from "quasar";
 import { defineComponent } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 export default defineComponent({
   name: "ResultPage",
   data() {
     return {
       result: 58,
+      currentCard: 0,
+      numberCard: 1,
+      indexDeck: 0,
+      route: useRoute(),
+      router: useRouter(),
     };
+  },
+  mounted() {
+    this.indexDeck = this.route.params.indexDeck;
+    let data = LocalStorage.getItem("DECK");
+    this.currentCard = data[this.indexDeck].complete;
+    this.numberCard = data[this.indexDeck].cards.length;
+    console.log(data);
+  },
+  methods: {
+    reStartAllCard() {
+      this.router.push({
+        name: "LearningPage",
+        params: {
+          index: this.indexDeck,
+          front: Math.floor(Math.random()),
+          type: "All",
+          numberOption: 0,
+        },
+      });
+    },
+    reStartUndoneCard() {
+      this.router.push({
+        name: "LearningPage",
+        params: {
+          index: this.indexDeck,
+          front: Math.floor(Math.random()),
+          type: "Not Learnt",
+          numberOption: 0,
+        },
+      });
+    },
   },
 });
 </script>

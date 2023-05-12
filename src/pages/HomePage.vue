@@ -21,10 +21,10 @@
             item.name
           }}</q-item-label>
           <q-item-label class="row justify-end q-mr-sm">
-            {{ item.complete }}/{{ item.target }}</q-item-label
+            {{ item.complete }}/{{ item.cards.length }}</q-item-label
           >
           <q-linear-progress
-            :value="item.target === 0 ? 0 : item.complete / item.target"
+            :value="item.complete === 0 ? 0 : item.complete / item.cards.length"
             color="indigo-3 progress-bar"
             class="q-mt-sm"
             size="lg"
@@ -128,8 +128,8 @@ export default defineComponent({
         const newCard = {
           id: Math.floor(Math.random() * 100000000),
           name: this.txt_modal,
-          target: 0,
           complete: 0,
+          cards: [],
         };
         let preDeck = LocalStorage.has("DECK");
 

@@ -263,6 +263,7 @@ export default {
       );
       console.log(data, this.route.params);
       const card = {
+        id: Math.floor(Math.random() * Math.pow(10, 10)),
         cardName: this.frontName,
         isStar: false,
         isChecked: false,

@@ -76,17 +76,25 @@
         </q-card-section>
 
         <q-card-actions vertical>
-          <q-btn flat no-caps style="font-size: 16px" to="/LearningPage"
+          <q-btn flat no-caps style="font-size: 16px" @click="allCard"
             >All cards</q-btn
           >
           <q-separator />
-          <q-btn flat no-caps style="font-size: 16px">Not learnt cards</q-btn>
+          <q-btn flat no-caps style="font-size: 16px" @click="onNotLearn"
+            >Not learnt cards</q-btn
+          >
           <q-separator />
-          <q-btn flat no-caps style="font-size: 16px">Favorite cards</q-btn>
+          <q-btn flat no-caps style="font-size: 16px" @click="onFavorite"
+            >Favorite cards</q-btn
+          >
           <q-separator />
-          <q-btn flat no-caps style="font-size: 16px">Random 5 cards</q-btn>
+          <q-btn flat no-caps style="font-size: 16px" @click="onRandom_5"
+            >Random 5 cards</q-btn
+          >
           <q-separator />
-          <q-btn flat no-caps style="font-size: 16px">Random 10 cards</q-btn>
+          <q-btn flat no-caps style="font-size: 16px" @click="onRandom_10"
+            >Random 10 cards</q-btn
+          >
           <q-separator />
           <q-btn flat no-caps style="font-size: 16px" @click="onOption"
             >Option</q-btn
@@ -124,27 +132,15 @@
         </q-card-section>
 
         <q-card-actions vertical>
-          <q-btn
-            flat
-            no-caps
-            style="font-size: 16px"
-            @click="openLearning_7 = !openLearning_7"
+          <q-btn flat no-caps style="font-size: 16px" @click="frontToBack"
             >Front to Back</q-btn
           >
           <q-separator />
-          <q-btn
-            flat
-            no-caps
-            style="font-size: 16px"
-            @click="openLearning_7 = !openLearning_7"
+          <q-btn flat no-caps style="font-size: 16px" @click="backToFront"
             >Back to Front</q-btn
           >
           <q-separator />
-          <q-btn
-            flat
-            no-caps
-            style="font-size: 16px"
-            @click="openLearning_7 = !openLearning_7"
+          <q-btn flat no-caps style="font-size: 16px" @click="onRandom"
             >Random</q-btn
           >
           <q-separator />
@@ -187,7 +183,7 @@
         >
           <q-input
             outlined
-            v-model="text"
+            v-model="numberOption"
             :dense="dense"
             autofocus
             style="text-align: center; font-size: 16px"
@@ -208,6 +204,7 @@
           "
         >
           <q-btn
+            @click="openOption = !openOption"
             flat
             label="Cancel"
             no-caps
@@ -215,6 +212,7 @@
           />
           <q-separator vertical color="indigo-11" />
           <q-btn
+            @click="onMoveOption"
             flat
             label="OK"
             no-caps
@@ -323,7 +321,13 @@
             }"
             >Preview</q-btn
           >
-          <q-btn flat no-caps style="font-size: 16px; color: red">Cancel</q-btn>
+          <q-btn
+            flat
+            no-caps
+            style="font-size: 16px; color: red"
+            @click="eachCardOption = !eachCardOption"
+            >Cancel</q-btn
+          >
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -466,39 +470,10 @@ export default defineComponent({
       dataDeck: [],
       indexDeck: 0,
       indexClick: 0,
-
-      CARD: [
-        // {
-        //   cardName: "Father",
-        //   isStar: false,
-        //   isChecked: true,
-        // },
-        // {
-        //   cardName: "Father",
-        //   isStar: false,
-        //   isChecked: true,
-        // },
-        // {
-        //   cardName: "Father",
-        //   isStar: true,
-        //   isChecked: true,
-        // },
-        // {
-        //   cardName: "Father",
-        //   isStar: false,
-        //   isChecked: true,
-        // },
-        // {
-        //   cardName: "Father",
-        //   isStar: true,
-        //   isChecked: true,
-        // },
-        // {
-        //   cardName: "Father",
-        //   isStar: false,
-        //   isChecked: false,
-        // },
-      ],
+      CARD: [],
+      isFront: 0,
+      numberCards: 0,
+      numberOption: 0,
     };
   },
   mounted() {
@@ -569,7 +544,7 @@ export default defineComponent({
 
       data.splice(this.indexDeck, 1);
       LocalStorage.set("DECK", data);
-      this.router.back();
+      this.router.go(-1);
       this.checkDelete = false;
     },
     newCard() {
@@ -578,13 +553,103 @@ export default defineComponent({
         params: { id: this.$route.params.id },
       });
     },
-    // navigatePreview() {
-    //   console.log("Card Page", this.cardData);
-    //   this.router.push({
-    //     name: "PreviewCard",
-    //     params: { cardData: this.cardData },
-    //   });
-    // },
+    frontToBack() {
+      this.openLearning_7 = !this.openLearning_7;
+      this.isFront = 0;
+    },
+    backToFront() {
+      this.openLearning_7 = !this.openLearning_7;
+      this.isFront = 1;
+    },
+    onRandom() {
+      this.openLearning_7 = !this.openLearning_7;
+      this.isFront = Math.floor(Math.random() * 1);
+    },
+    allCard() {
+      this.openLearning_7 = !this.openLearning_7;
+      this.openLearning_4 = !this.openLearning_7;
+      // this.indexDeck = this.route.params.index;
+      // this.numberCards = data[this.indexDeck].cards.length;
+      // this.isFront = this.route.params.front;
+
+      // this.CARD = [...data[this.indexDeck].cards];
+      this.router.push({
+        name: "LearningPage",
+        params: {
+          index: this.indexDeck,
+          front: this.isFront,
+
+          type: "All",
+          numberOption: this.numberOption,
+        },
+      });
+    },
+    onNotLearn() {
+      this.openLearning_7 = !this.openLearning_7;
+      this.openLearning_4 = !this.openLearning_7;
+
+      this.router.push({
+        name: "LearningPage",
+        params: {
+          index: this.indexDeck,
+          front: this.isFront,
+          type: "Not Learnt",
+          numberOption: this.numberOption,
+        },
+      });
+    },
+    onFavorite() {
+      this.openLearning_7 = !this.openLearning_7;
+      this.openLearning_4 = !this.openLearning_7;
+      this.router.push({
+        name: "LearningPage",
+        params: {
+          index: this.indexDeck,
+          front: this.isFront,
+          type: "Favorite",
+          numberOption: this.numberOption,
+        },
+      });
+    },
+    onRandom_5() {
+      this.openLearning_7 = !this.openLearning_7;
+      this.openLearning_4 = !this.openLearning_7;
+      this.router.push({
+        name: "LearningPage",
+        params: {
+          index: this.indexDeck,
+          front: this.isFront,
+          type: "Random_5",
+          numberOption: this.numberOption,
+        },
+      });
+    },
+    onRandom_10() {
+      this.openLearning_7 = !this.openLearning_7;
+      this.openLearning_4 = !this.openLearning_7;
+      this.router.push({
+        name: "LearningPage",
+        params: {
+          index: this.indexDeck,
+          front: this.isFront,
+          type: "Random_10",
+          numberOption: this.numberOption,
+        },
+      });
+    },
+    onMoveOption() {
+      this.openLearning_7 = !this.openLearning_7;
+      this.openLearning_4 = !this.openLearning_7;
+      this.router.push({
+        name: "LearningPage",
+        params: {
+          index: this.indexDeck,
+          front: this.isFront,
+          type: "Option",
+          numberOption: this.numberOption,
+        },
+      });
+    },
   },
 });
 </script>
