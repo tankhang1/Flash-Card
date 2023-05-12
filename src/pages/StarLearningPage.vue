@@ -397,8 +397,6 @@ export default defineComponent({
       if (newInfo.direction === "left") {
         if (this.indexCard < this.CARD.length) {
           this.indexCard++;
-          console.log(this.indexCard);
-
           this.CARD[this.indexCard - 1].isChecked = true;
           let index = this.DATA_CARD.findIndex(
             (item) => item.id === this.CARD[this.indexCard - 1].id

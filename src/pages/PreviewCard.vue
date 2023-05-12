@@ -116,6 +116,7 @@
         <div @click="showCard = !showCard">
           <q-card-section style="font-size: 16px" v-if="!showCard">
             <q-img
+              v-if="this.card?.font?.image !== ''"
               :src="this.card?.font?.image"
               width="100%"
               height="200px"
@@ -127,6 +128,7 @@
           </q-card-section>
           <q-card-section style="font-size: 16px" v-else>
             <q-img
+              v-if="this.card?.font?.image !== ''"
               :src="this.card?.back?.image"
               width="100%"
               height="200px"
