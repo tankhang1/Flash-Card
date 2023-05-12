@@ -44,7 +44,7 @@
                 class="q-my-xs"
                 @click="onDeleteDeck"
               >
-                <q-item-section class="text-subtitle1 menu-text"
+                <q-item-section class="text-subtitle1" style="color: #eb3223"
                   >Delete Deck</q-item-section
                 >
               </q-item>
@@ -54,6 +54,28 @@
         <!-- <q-btn flat round dense icon="more_vert" @click="onOpenModal" /> -->
       </q-toolbar>
     </q-header>
+    <!-- FLOATING BUTTON -->
+    <q-page-sticky position="bottom-right" :offset="[18, 50]">
+      <q-btn fab icon="add" color="primary" @click="newCard" />
+    </q-page-sticky>
+    <!-- START LEARNING BUTTON -->
+    <q-page-sticky position="bottom" :offset="[18, 18]">
+      <q-btn
+        hide-icon
+        color="primary"
+        @click="onStartLearning"
+        style="
+          padding: 10px 30px 10px 30px;
+          font-size: 15px;
+          font-weight: 400;
+          letter-spacing: 0.8px;
+          border-radius: 10px;
+        "
+        no-caps
+        unelevated
+        >Start Learning</q-btn
+      >
+    </q-page-sticky>
     <!-- Dialog How do you want to learn 7 options -->
     <q-dialog
       v-model="openLearning_7"
@@ -331,66 +353,49 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <!-- Body -->
-    <div class="row card-container">
+    <!-- CARD -->
+    <div class="column" style="padding: 10px; width: 100%">
       <q-intersection
         v-for="(item, index) in CARD"
         :key="index"
-        class="card-style"
+        style="width: 100%"
         clickable
         @click="onClick"
       >
         <q-card
           bordered
-          class="q-mx-xs q-my-md shadow-4 card-border"
+          class="q-mx-xs q-my-md shadow-4"
+          style="border-radius: 10px; margin-top: 2px"
           @click="cardClick(item, index)"
           href="/Edit"
         >
-          <q-card-section>
-            <div class="text-subtitle2" style="text-align: center">
-              {{ item.cardName }}
-            </div>
-            <div class="icon-style">
+          <q-card-section style="padding-top: 3px; padding-bottom: 3px">
+            <div
+              style="flex-direction: row; display: flex; align-items: center"
+            >
+              <q-icon
+                :name="item.isStar ? 'star' : none"
+                color="yellow"
+                size="30px"
+              />
+              <div
+                class="text-subtitle2"
+                style="align-items: flex-start; width: 80%; margin-left: 10px"
+              >
+                {{ item.cardName }}
+              </div>
               <q-icon
                 :name="item.isChecked ? 'fa-solid fa-circle-check' : none"
                 color="green"
-                size="32px"
+                size="25px"
               />
             </div>
           </q-card-section>
-          <div class="star-style">
-            <q-icon
-              :name="item.isStar ? 'star' : none"
-              color="yellow"
-              size="32px"
-            />
-          </div>
         </q-card>
       </q-intersection>
     </div>
-    <!-- ButtonFooter -->
-    <div class="btn-footer-container" style="margin-top: 10px">
-      <q-btn
-        color="#fff"
-        label="New Card"
-        class="btn-new-card text-subtitle1"
-        unelevated
-        text-color="primary"
-        no-caps
-        icon="add_circle_outline"
-        @click="newCard"
-      />
-      <q-btn
-        color="primary"
-        text-color="white"
-        label="Start Learning"
-        class="btn-start-learning text-subtitle1"
-        unelevated
-        no-caps
-        @click="onStartLearning"
-      />
-    </div>
   </q-page>
+  <!-- Modal Rename Deck -->
   <q-dialog v-model="showNameDialog">
     <q-card class="my-card">
       <q-card-section>
@@ -541,7 +546,6 @@ export default defineComponent({
     },
     deleteOK() {
       let data = [...LocalStorage.getItem("DECK")];
-
       data.splice(this.indexDeck, 1);
       LocalStorage.set("DECK", data);
       this.router.go(-1);
