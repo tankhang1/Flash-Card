@@ -42,7 +42,7 @@
                 clickable
                 v-close-popup
                 class="q-my-xs"
-                @click="onDeleteDeck"
+                @click="checkDelete = true"
               >
                 <q-item-section class="text-subtitle1" style="color: #eb3223"
                   >Delete Deck</q-item-section
@@ -51,7 +51,6 @@
             </q-list>
           </q-menu>
         </q-btn>
-        <!-- <q-btn flat round dense icon="more_vert" @click="onOpenModal" /> -->
       </q-toolbar>
     </q-header>
     <!-- FLOATING BUTTON -->
@@ -76,7 +75,7 @@
         >Start Learning</q-btn
       >
     </q-page-sticky>
-    <!-- Dialog How do you want to learn 7 options -->
+    <!-- DIALOG 7 OPTIONS -->
     <q-dialog
       v-model="openLearning_7"
       transition-show="rotate"
@@ -132,7 +131,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <!-- Dialog How do you want to learn 4 options -->
+    <!-- DIALOG 4 OPTIONS -->
     <q-dialog
       v-model="openLearning_4"
       transition-show="rotate"
@@ -263,7 +262,7 @@
             Are you sure?
           </div>
           <p style="color: #7286d3; text-align: center; font-size: 16px">
-            {{ txtCard }} card will be deleted?
+            "{{ txtCard }}" deck will be deleted?
           </p>
         </q-card-section>
         <q-card-actions
@@ -318,7 +317,11 @@
           </div>
         </q-card-section>
         <q-card-actions vertical>
-          <q-btn flat no-caps style="font-size: 16px" @click="deleteCard"
+          <q-btn
+            flat
+            no-caps
+            style="font-size: 16px"
+            @click="alertDelete = true"
             >Delete</q-btn
           >
           <q-btn
@@ -353,19 +356,67 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <!-- ALERT DELETE -->
+    <q-dialog v-model="alertDelete">
+      <q-card class="my-card">
+        <q-card-section>
+          <div
+            class="text-h6"
+            style="
+              color: #7286d3;
+              font-size: 20px;
+              font-weight: 600;
+              text-align: center;
+            "
+          >
+            Are you sure?
+          </div>
+          <p style="color: #7286d3; font-size: 14px; text-align: center">
+            "{{ this.CARD[this.indexClick].vocabulary }}" card will be deleted?
+          </p>
+        </q-card-section>
+        <q-card-actions
+          horizontal
+          style="
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            flex-direction: row;
+            align-items: center;
+            margin-left: auto;
+            margin-right: auto;
+            border-top: 1px solid #7286d3;
+          "
+        >
+          <q-btn
+            flat
+            label="Cancel"
+            no-caps
+            style="color: #eb3223; font-size: 16px; width: 48.5%"
+            @click="alertDelete = false"
+          />
+          <q-separator vertical color="indigo-11" />
+          <q-btn
+            flat
+            label="OK"
+            no-caps
+            style="color: #09a506; font-size: 16px; width: 48.5%"
+            @click="deleteCard"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <!-- CARD -->
     <div class="column" style="padding: 10px; width: 100%">
       <q-intersection
         v-for="(item, index) in CARD"
         :key="index"
         style="width: 100%"
-        clickable
-        @click="onClick"
       >
         <q-card
           bordered
           class="q-mx-xs q-my-md shadow-4"
-          style="border-radius: 10px; margin-top: 2px"
+          style="border-radius: 10px; margin-top: 8px; margin-bottom: 8px"
           @click="cardClick(item, index)"
           href="/Edit"
         >
@@ -382,7 +433,7 @@
                 class="text-subtitle2"
                 style="align-items: flex-start; width: 80%; margin-left: 10px"
               >
-                {{ item.cardName }}
+                {{ item.vocabulary }}
               </div>
               <q-icon
                 :name="item.isChecked ? 'fa-solid fa-circle-check' : none"
@@ -395,7 +446,7 @@
       </q-intersection>
     </div>
   </q-page>
-  <!-- Modal Rename Deck -->
+  <!-- MODAL RENAME DECK -->
   <q-dialog v-model="showNameDialog">
     <q-card class="my-card">
       <q-card-section>
@@ -462,23 +513,24 @@ export default defineComponent({
   },
   data() {
     return {
-      openModal: false,
-      router: useRouter(),
-      showNameDialog: false,
       openLearning_7: false,
       openLearning_4: false,
       openOption: false,
-      checkDelete: false,
-      eachCardOption: false,
       txtCard: "",
       newDeckName: "",
       dataDeck: [],
-      indexDeck: 0,
-      indexClick: 0,
-      CARD: [],
       isFront: 0,
       numberCards: 0,
       numberOption: 0,
+      //
+      router: useRouter(),
+      showNameDialog: false,
+      alertDelete: false,
+      checkDelete: false,
+      CARD: [],
+      indexDeck: 0,
+      indexClick: 0,
+      eachCardOption: false,
     };
   },
   mounted() {
@@ -489,25 +541,32 @@ export default defineComponent({
     this.indexDeck = index;
     this.dataDeck = data[index];
     this.txtCard = this.dataDeck.name;
-    this.CARD = data[index].cards ?? [];
+    //this.CARD = data[index].cards ?? [];
+    this.CARD = data[index].cards;
   },
 
   methods: {
-    onOpenModal() {
-      console.log(this.$route.params.id);
+    deleteCard() {
+      this.eachCardOption = !this.eachCardOption;
+      this.alertDelete = false;
+      let data = LocalStorage.getItem("DECK");
+      data[this.indexDeck].cards.splice(this.indexClick, 1);
+      LocalStorage.set("DECK", data);
+      this.CARD = data[this.indexDeck].cards;
+    },
+    cardClick(item, index) {
+      this.indexClick = index;
+      this.eachCardOption = !this.eachCardOption;
     },
     onRenameDeck() {
       let data = LocalStorage.getItem("DECK");
-
       data[this.indexDeck].name = this.newDeckName;
       this.txtCard = this.newDeckName;
       LocalStorage.set("DECK", data);
-
       this.showNameDialog = false;
     },
     onResetDeck() {
       let data = LocalStorage.getItem("DECK");
-
       data[this.indexDeck].cards.forEach((element) => {
         element.isChecked = false;
       });
@@ -516,31 +575,14 @@ export default defineComponent({
       });
       LocalStorage.set("DECK", data);
     },
-    onDeleteDeck() {
-      this.checkDelete = !this.checkDelete;
-    },
-    deleteCard() {
-      console.log("DEETE");
-      this.eachCardOption = !this.eachCardOption;
-      let data = LocalStorage.getItem("DECK");
-      data[this.indexDeck].cards.splice(this.indexClick, 1);
-      LocalStorage.set("DECK", data);
-      this.CARD = data[this.indexDeck].cards;
-    },
-    onClick() {
-      console.log("onClick");
-    },
     onStartLearning() {
-      this.openLearning_4 = !this.openLearning_4;
+      //this.openLearning_4 = !this.openLearning_4;
+      console.log("start learning");
     },
     onOption() {
       this.openOption = !this.openOption;
     },
-    cardClick(item, index) {
-      this.indexClick = index;
 
-      this.eachCardOption = !this.eachCardOption;
-    },
     deleteCancle() {
       this.checkDelete = false;
     },

@@ -3,165 +3,103 @@
     <q-header class="bg-primary header">
       <q-toolbar>
         <q-btn dense flat round icon="arrow_back" @click="$router.go(-1)" />
-        <q-toolbar-title class="title-header">Home</q-toolbar-title>
-        <q-btn flat round dense icon="done" @click="addNewCard" />
+        <q-toolbar-title class="title-header">New Card</q-toolbar-title>
+        <q-btn flat round dense icon="done" @click="onAddNewCard" />
       </q-toolbar>
     </q-header>
-
-    <q-tabs v-model="activePage" align="left" class="text-primary">
-      <q-tab name="front" label="Front" />
-      <q-tab name="back" label="Back" />
-    </q-tabs>
-    <q-page-container style="padding-top: 0">
-      <q-page class="q-pa-sm">
-        <div v-if="activePage === 'front'">
-          <div class="text-subtitle1 mt-sm">Front Name</div>
-          <q-input
-            v-model="frontName"
-            outlined
-            dense
-            placeholder="Enter front name"
-            class="q-mt-md"
-          />
-          <div class="text-subtitle1 mt-sm">Front Description</div>
-          <q-input
-            v-model="frontDescription"
-            outlined
-            dense
-            placeholder="Enter front description"
-            class="q-mt-md"
-          />
-          <div v-show="!takeFront">
-            <div
-              class="q-pa-md"
-              style="
-                border: 2px solid black;
-                width: 90%;
-                margin-left: auto;
-                margin-right: auto;
-                position: relative;
-                top: 20px;
-                margin-bottom: 20px;
-                border-radius: 15px;
-              "
-            >
-              <video
-                class="full-width"
-                autoplay
-                ref="video_front"
-                v-show="!imageCaptured_Front"
-              ></video>
-              <canvas
-                ref="canvas_front"
-                class="full-width"
-                height="240px"
-                width="100%"
-                v-show="imageCaptured_Front"
-              ></canvas>
-              <q-img
-                :src="imageData()"
-                class="full-width"
-                height="240px"
-                width="100%"
-                fit="contain"
-              />
-            </div>
-
-            <div
-              class="text-center"
-              style="margin-top: 40px; margin-bottom: 10px"
-            >
-              <q-btn
-                :label="!imageCaptured_Front ? 'Take a picture' : 'Open Camera'"
-                no-caps
-                icon="camera"
-                color="primary"
-                @click="captureImage_Front"
-              />
-            </div>
-          </div>
+    <!-- TEXT INPUT -->
+    <q-page-container
+      style="padding: 10px; margin-left: 20px; margin-right: 20px"
+    >
+      <div class="text-subtitle1 mt-sm">
+        Vocabulary
+        <span style="color: red; font-size: 17px">*</span>
+      </div>
+      <q-input v-model="vocabulary" outlined dense class="q-mt-md" />
+      <div class="row items-center q-pt-sm" v-if="showAlert">
+        <q-icon name="error" color="red" size="15px" />
+        <div style="font-size: 14px; margin-left: 10px; color: red">
+          Please fill in vocabulary field
         </div>
-        <div v-else>
-          <div class="text-subtitle1 mt-sm">Back Name</div>
-          <q-input
-            v-model="backName"
-            outlined
-            dense
-            placeholder="Enter back name"
-            class="q-mt-md"
-          />
-          <div class="text-subtitle1 mt-sm">Back Description</div>
-          <q-input
-            v-model="backDescription"
-            outlined
-            dense
-            placeholder="Enter back description"
-            class="q-mt-md"
-          />
-
-          <div v-show="!takeBack">
-            <div
-              class="q-pa-md"
-              style="
-                border: 2px solid black;
-                width: 90%;
-                margin-left: auto;
-                margin-right: auto;
-                position: relative;
-                top: 20px;
-                margin-bottom: 20px;
-                border-radius: 15px;
-              "
-            >
-              <video
-                class="full-width"
-                autoplay
-                ref="video_back"
-                v-show="!imageCaptured_Back"
-              ></video>
-              <canvas
-                ref="canvas_back"
-                class="full-width"
-                height="240px"
-                width="100%"
-                v-show="imageCaptured_Back"
-              ></canvas>
-              <q-img
-                :src="imageData()"
-                class="full-width"
-                height="240px"
-                width="100%"
-                fit="contain"
-              />
-            </div>
-
-            <div
-              class="text-center"
-              style="margin-top: 40px; margin-bottom: 10px"
-            >
-              <q-btn
-                :label="!imageCaptured_Back ? 'Take a picture' : 'Open Camera'"
-                no-caps
-                icon="camera"
-                color="primary"
-                @click="captureImage_Back"
-              />
-            </div>
-          </div>
+      </div>
+      <div class="text-subtitle1 q-pt-md">Pronunciation</div>
+      <q-input v-model="pronunciation" outlined dense class="q-mt-md" />
+      <div class="text-subtitle1 q-pt-md">Meaning</div>
+      <q-input v-model="meaning" outlined dense class="q-mt-md" autogrow />
+      <div class="text-subtitle1 q-pt-md">Example</div>
+      <q-input v-model="example" outlined dense class="q-mt-md" autogrow />
+      <div class="row items-center q-pt-xl">
+        <div style="font-size: 16px; margin-right: 10px">Audio</div>
+        <q-btn
+          flat
+          icon="fa-solid fa-file-audio"
+          color="primary"
+          round
+          @click="onAudio"
+        />
+      </div>
+      <div class="row items-center q-pt-md">
+        <div style="font-size: 16px; margin-right: 10px">Camera</div>
+        <q-btn
+          flat
+          icon="camera_alt"
+          color="primary"
+          round
+          @click="showDialog = true"
+        />
+      </div>
+      <!-- CAMERA -->
+      <div v-show="activeCamera">
+        <div
+          class="q-pa-md"
+          style="
+            border: 2px solid black;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            top: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+          "
+        >
+          <video
+            class="full-width"
+            autoplay
+            ref="video"
+            v-show="imageCapture === false"
+          ></video>
+          <canvas
+            ref="canvas"
+            class="full-width"
+            height="240px"
+            width="100%"
+            v-show="imageCapture === true"
+          ></canvas>
+          <!-- <q-img
+            :src="imageData()"
+            class="full-width"
+            height="240px"
+            width="100%"
+            fit="contain"
+            style="border: 1px solid red"
+          /> -->
         </div>
-      </q-page>
+        <div class="text-center" style="margin-top: 40px; margin-bottom: 10px">
+          <q-btn
+            :label="imageCapture === false ? 'Take a picture' : 'Open Camera'"
+            no-caps
+            icon="camera"
+            color="primary"
+            @click="captureImage"
+            v-show="activeCamera"
+          />
+        </div>
+      </div>
     </q-page-container>
   </q-page>
-  <div class="row justify-center fixed-bottom q-pa-md">
-    <q-btn
-      flat
-      icon="camera_alt"
-      color="primary"
-      round
-      @click="showDialog = true"
-    />
-  </div>
 
+  <!-- MODAL OPTION CAMERA -->
   <q-dialog v-model="showDialog" position="bottom">
     <q-card>
       <q-item
@@ -172,7 +110,6 @@
       >
         <q-file
           outlined
-          v-model="imageUpload_Front"
           label="Choose an image"
           class="full-width"
           accept="image/*"
@@ -215,207 +152,114 @@ export default {
   },
   data() {
     return {
-      imageCaptured_Back: false,
-      imageCaptured_Front: false,
-      imageUrl_Front: "",
-      imageUrl_Back: "",
-      imageUpload_Front: [],
-      imageUpload_Back: [],
-      activePage: "front",
-      frontName: "",
+      showDialog: false,
+      vocabulary: "",
+      pronunciation: "",
+      meaning: "",
+      example: "",
+      audio: "",
+      showAlert: false,
       route: useRoute(),
       router: useRouter(),
-      frontDescription: "",
-      backName: "",
-      backDescription: "",
-      showDialog: false,
-      takeFront: true,
-      takeBack: true,
+      activeCamera: false,
+      imageCapture: false,
     };
   },
   mounted() {
-    LocalStorage.set("Image_Front", "");
-    LocalStorage.set("Image_Back", "");
-    this.takeBack = true;
-    this.takeFront = true;
+    LocalStorage.set("Image", "");
   },
-  updated() {
-    //console.log("front", this.imageUpload_Front);
-  },
+
   methods: {
-    imageData() {
-      if (this.activePage === "front") {
-        return LocalStorage.getItem("Image_Front");
-      } else {
-        return LocalStorage.getItem("Image_Back");
-      }
-    },
     checkOpenCamera() {
-      if (this.activePage === "front" && this.takeFront === true) return false;
-
-      if (this.activePage === "back" && this.takeBack === true) return false;
-      return true;
+      if (this.activeCamera) return true;
+      return false;
     },
-    addNewCard() {
-      const data = [...LocalStorage.getItem("DECK")];
-      const index = data.findIndex(
-        (value) => String(value.id) === this.route.params.id
-      );
-      console.log(data, this.route.params);
-      const card = {
-        id: Math.floor(Math.random() * Math.pow(10, 10)),
-        cardName: this.frontName,
-        isStar: false,
-        isChecked: false,
-        font: {
-          name: this.frontName,
-          description: this.frontDescription,
-          image: LocalStorage.getItem("Image_Front"),
-        },
-        back: {
-          name: this.backName,
-          description: this.backDescription,
-          image: LocalStorage.getItem("Image_Back"),
-        },
-      };
-      if (data[index].cards) {
+    onAudio() {
+      //console.log("Audio");
+    },
+    onAddNewCard() {
+      if (this.vocabulary === "") {
+        this.showAlert = true;
+      } else {
+        this.showAlert = false;
+        const data = [...LocalStorage.getItem("DECK")];
+        const index = data.findIndex(
+          (value) => String(value.id) === this.route.params.id
+        );
+        const card = {
+          id: Math.floor(Math.random() * Math.pow(10, 10)),
+          vocabulary: this.vocabulary,
+          pronunciation: this.pronunciation,
+          meaning: this.meaning,
+          example: this.example,
+          isStar: false,
+          isChecked: false,
+          image: LocalStorage.getItem("Image"),
+          audio: "",
+        };
         data[index].cards = [...data[index].cards, card];
-      } else {
-        data[index].cards = [card];
+        LocalStorage.set("DECK", data);
+        this.router.go(-1);
       }
-      // console.log(data[index]);
-      LocalStorage.set("DECK", data);
-      this.router.go(-1);
     },
-
+    imageData() {
+      return LocalStorage.getItem("Image");
+    },
     initCamera() {
-      if (this.activePage === "front") {
-        navigator.mediaDevices
-          .getUserMedia({
-            video: true,
-          })
-          .then((stream) => {
-            this.$refs.video_front.srcObject = stream;
-          });
-      } else {
-        navigator.mediaDevices
-          .getUserMedia({
-            video: true,
-          })
-          .then((stream) => {
-            this.$refs.video_back.srcObject = stream;
-          });
-      }
+      navigator.mediaDevices
+        .getUserMedia({
+          video: true,
+        })
+        .then((stream) => {
+          this.$refs.video.srcObject = stream;
+        });
     },
     openCamera() {
-      if (this.activePage === "front") {
-        this.takeFront = false;
-      } else {
-        this.takeBack = false;
-      }
+      this.activeCamera = true;
       this.initCamera();
     },
-    captureImage_Front() {
-      if (this.imageCaptured_Front === false) {
-        let video = this.$refs.video_front;
-        let canvas = this.$refs.canvas_front;
+    captureImage() {
+      if (this.imageCapture === false) {
+        let video = this.$refs.video;
+        let canvas = this.$refs.canvas;
         canvas.width = video.getBoundingClientRect().width;
         canvas.height = video.getBoundingClientRect().height;
-
         let context = canvas.getContext("2d");
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        this.imageCaptured_Front = true;
-        LocalStorage.set("Image_Front", canvas.toDataURL());
-
-        this.imageUrl_Front = this.dataURItoBlob(canvas.toDataURL());
-        this.imageCaptured_Front = true;
+        this.imageCapture = true;
+        LocalStorage.set("Image", canvas.toDataURL());
         this.disableCamera();
       } else {
-        this.imageCaptured_Front = false;
-        this.initCamera();
-      }
-      // this.disableCamera();
-    },
-    captureImage_Back() {
-      if (this.imageCaptured_Back === false) {
-        let video = this.$refs.video_back;
-        let canvas = this.$refs.canvas_back;
-        canvas.width = video.getBoundingClientRect().width;
-        canvas.height = video.getBoundingClientRect().height;
-
-        let context = canvas.getContext("2d");
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        this.imageCaptured_Back = true;
-        LocalStorage.set("Image_Back", canvas.toDataURL());
-        this.imageCaptured_Back = true;
-        this.imageUrl_Back = this.dataURItoBlob(canvas.toDataURL());
-
-        this.disableCamera();
-      } else {
-        this.imageCaptured_Back = false;
+        this.imageCapture = false;
         this.initCamera();
       }
     },
     uploadClick() {
-      if (this.activePage === "front") {
-        this.takeFront = false;
-      } else {
-        this.takeBack = false;
-      }
-      this.initCamera();
+      this.activeCamera = true;
+      //this.initCamera();
     },
     captureImageFallBack(file) {
-      console.log("file", file.target.files[0]);
-      if (this.activePage === "front") {
-        this.imageUrl_Front = file;
-        let canvas = this.$refs.canvas_front;
-        let context = canvas.getContext("2d");
-
-        var reader = new FileReader();
-        reader.onload = (event) => {
-          LocalStorage.set("Image_Front", reader.result);
-
-          var img = new Image();
-          img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            context.drawImage(img, 0, 0);
-            this.imageCaptured_Front = true;
-          };
-          img.src = event.target.result;
+      let canvas = this.$refs.canvas;
+      let context = canvas.getContext("2d");
+      var reader = new FileReader();
+      reader.onload = (event) => {
+        LocalStorage.set("Image", reader.result);
+        var img = new Image();
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          context.drawImage(img, 0, 0);
+          this.imageCapture = true;
         };
-        reader.readAsDataURL(file.target.files[0]);
-      } else {
-        this.imageUrl_Back = file;
-        let canvas = this.$refs.canvas_back;
-        let context = canvas.getContext("2d");
-
-        var reader = new FileReader();
-        reader.onload = (event) => {
-          LocalStorage.set("Image_Back", reader.result);
-          var img = new Image();
-          img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            context.drawImage(img, 0, 0);
-            this.imageCaptured_Back = true;
-          };
-          img.src = event.target.result;
-        };
-        reader.readAsDataURL(file.target.files[0]);
-      }
-      this.disableCamera();
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file.target.files[0]);
+      //this.disableCamera();
     },
     disableCamera() {
-      if (this.activePage === "front") {
-        this.$refs.video_front.srcObject.getVideoTracks().forEach((track) => {
-          track.stop();
-        });
-      } else {
-        this.$refs.video_back.srcObject.getVideoTracks().forEach((track) => {
-          track.stop();
-        });
-      }
+      this.$refs.video.srcObject.getVideoTracks().forEach((track) => {
+        track.stop();
+      });
     },
     dataURItoBlob(dataURI) {
       // convert base64 to raw binary data held in a string

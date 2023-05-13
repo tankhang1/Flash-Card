@@ -1,17 +1,13 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header elevated class="bg-primary text-white">
+    <q-header unelevated class="bg-primary text-white">
       <q-toolbar>
         <q-btn icon="west" flat @click="goBackBtn" />
         <q-toolbar-title style="font-size: 20px; text-align: center"
           >Preview Card</q-toolbar-title
         >
         <div>
-          <q-btn
-            icon="delete"
-            flat
-            @click="deleteCard((item = 'My Cat'), (index = 2))"
-          />
+          <q-btn icon="delete" flat @click="deleteOptions = true" />
           <q-btn
             icon="edit"
             flat
@@ -48,7 +44,7 @@
               Are you sure?
             </div>
             <p style="color: #7286d3; font-size: 14px; text-align: center">
-              {{ txtCard }} card will be deleted?
+              "{{ this.card?.vocabulary }}" card will be deleted?
             </p>
           </q-card-section>
           <q-card-actions
@@ -82,26 +78,33 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <!-- CARD -->
       <q-card
         bordered
         style="
           width: 80%;
-          min-height: 400px;
+          min-height: 450px;
           margin-left: auto;
           margin-right: auto;
           margin-top: 25px;
         "
       >
-        <q-card-section
-          horizontal
-          style="display: flexbox; align-items: center"
-        >
+        <q-card-section horizontal style="display: flex; align-items: center">
+          <q-btn
+            flat
+            round
+            icon="volume_up"
+            color="primary"
+            size="15px"
+            @click="audioClick"
+          />
           <div
             style="color: #7286d3; margin-left: auto; margin-right: auto"
             class="text-h6"
           >
-            {{ this.card?.font?.name }}
+            {{ this.card?.vocabulary }}
           </div>
+
           <q-btn
             flat
             round
@@ -111,47 +114,24 @@
             @click="starClick"
           />
         </q-card-section>
-
-        <q-separator dark inset />
-        <div @click="showCard = !showCard">
-          <q-card-section style="font-size: 16px" v-if="!showCard">
-            <q-img
-              v-if="this.card?.font?.image !== ''"
-              :src="this.card?.font?.image"
-              width="100%"
-              height="200px"
-              fit="cover"
-            />
-            <div style="width: 100%; word-wrap: break-word">
-              <p>{{ this.card?.font?.description }}</p>
-            </div>
-          </q-card-section>
-          <q-card-section style="font-size: 16px" v-else>
-            <q-img
-              v-if="this.card?.font?.image !== ''"
-              :src="this.card?.back?.image"
-              width="100%"
-              height="200px"
-              fit="cover"
-            />
-            <div style="width: 100%; word-wrap: break-word">
-              <p>{{ this.card?.back?.description }}</p>
-            </div>
-          </q-card-section>
-          <div
-            style="
-              position: absolute;
-              bottom: 10px;
-              justify-content: center;
-              display: flex;
-              width: 100%;
-              color: #a3a3a3;
-              margin-top: 20px;
-            "
-          >
-            Tap to flip it!
-          </div>
+        <div style="text-align: center; margin-top: -5px">
+          {{ this.card?.pronunciation }}
         </div>
+        <q-card-section style="font-size: 16px">
+          <q-img
+            v-if="this.card?.image !== ''"
+            :src="this.card?.image"
+            width="100%"
+            height="200px"
+            fit="contain"
+          />
+          <div style="width: 100%; word-wrap: break-word; margin-top: 20px">
+            <p>{{ this.card?.meaning }}</p>
+          </div>
+          <div style="width: 100%; word-wrap: break-word">
+            <p>Ex: {{ this.card?.example }}</p>
+          </div>
+        </q-card-section>
       </q-card>
     </q-page-container>
     <q-page-container>
@@ -169,12 +149,8 @@ export default {
 
   data() {
     return {
-      showCard: false,
       deleteOptions: false,
-      txtCard: "",
       route: useRoute(),
-      indexCard: null,
-      indexDeck: null,
       card: {},
       checkCard: false,
       router: useRouter(),
@@ -185,13 +161,11 @@ export default {
     this.card = cardTMP[this.route.params.id].cards[this.route.params.index];
     this.checkCard =
       cardTMP[this.route.params.id].cards[this.route.params.index].isStar;
-    console.log(this.card.font);
   },
   methods: {
-    deleteCard(item, index) {
-      this.deleteOptions = true;
-      console.log(item, index);
-      this.txtCard = item;
+    audioClick() {
+      console.log(this.eachCardOption);
+      console.log("Click Audio");
     },
     starClick() {
       this.checkCard = !this.checkCard;
@@ -204,11 +178,11 @@ export default {
       this.router.go(-1);
     },
     confirmDelete() {
-      this.eachCardOption = !this.eachCardOption;
+      //this.eachCardOption = !this.eachCardOption;
       let data = LocalStorage.getItem("DECK");
       data[this.route.params.id].cards.splice(this.route.params.index, 1);
       LocalStorage.set("DECK", data);
-      this.CARD = data[this.route.params.id].cards;
+      //this.CARD = data[this.route.params.id].cards;
       this.router.go(-1);
     },
   },
