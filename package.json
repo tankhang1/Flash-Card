@@ -14,6 +14,7 @@
     "@quasar/cli": "^2.1.1",
     "@quasar/extras": "^1.0.0",
     "@quasar/quasar-ui-qflashcard": "^1.0.5",
+    "@quasar/quasar-ui-qmediaplayer": "^2.0.0-beta.6",
     "md-gum-polyfill": "^1.0.0",
     "quasar": "^2.6.0",
     "vue": "^3.0.0",

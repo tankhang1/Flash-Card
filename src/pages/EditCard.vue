@@ -35,8 +35,18 @@
           icon="fa-solid fa-file-audio"
           color="primary"
           round
-          @click="onAudio"
+          @click="playAudio"
         />
+        <!-- <q-icon name="fa-solid fa-file-audio" color="primary" size="25px" /> -->
+        <div class="q-pa-md">
+          <q-file
+            v-model="files"
+            label="Pick files audio"
+            style="width: 150px"
+            accept=".mp3"
+            @input="onAudio"
+          />
+        </div>
       </div>
       <div class="row items-center q-pt-md">
         <div style="font-size: 16px; margin-right: 10px">Camera</div>
@@ -104,6 +114,8 @@
       </div>
     </q-page-container>
   </q-page>
+  <!-- AUDIO -->
+  <audio ref="audioPlayer" :src="audioFile"></audio>
   <!-- MODAL OPTION CAMERA -->
   <q-dialog v-model="showDialog" position="bottom">
     <q-card>
@@ -149,10 +161,15 @@
 </template>
 <script>
 import { LocalStorage } from "quasar";
-
+import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 export default {
   name: "EditCard",
+  setup() {
+    return {
+      files: ref(null),
+    };
+  },
   data() {
     return {
       route: useRoute(),
@@ -169,10 +186,12 @@ export default {
       imageCapture: false,
       image: "",
       haveImage: false,
+      audioFile: "",
     };
   },
   mounted() {
     LocalStorage.set("Image", "");
+    LocalStorage.set("Audio", "");
     let cardTMP = [...LocalStorage.getItem("DECK")];
     this.card = cardTMP[this.route.params.id].cards[this.route.params.index];
     this.vocabulary = this.card.vocabulary;
@@ -180,10 +199,12 @@ export default {
     this.meaning = this.card.meaning;
     this.example = this.card.example;
     this.image = this.card.image;
+    this.audioFile = this.card.audio;
     if (this.card.image !== "") {
       this.haveImage = true;
     } else this.haveImage = false;
     LocalStorage.set("Image", this.card.image);
+    LocalStorage.set("Audio", this.card.audio);
   },
 
   methods: {
@@ -191,8 +212,19 @@ export default {
       if (this.activeCamera) return true;
       return false;
     },
-    onAudio() {
-      console.log("Audio");
+    onAudio(file) {
+      //console.log("Audio");
+      var reader = new FileReader();
+      reader.onload = (event) => {
+        LocalStorage.set("Audio", reader.result);
+        this.audioFile = reader.result;
+      };
+      reader.readAsDataURL(file.target.files[0]);
+    },
+    playAudio() {
+      if (this.audioFile !== "") {
+        this.$refs.audioPlayer.play();
+      }
     },
     onRemoveImage() {
       if (this.haveImage) {
@@ -224,6 +256,8 @@ export default {
           this.example;
         cardTMP[this.route.params.id].cards[this.route.params.index].image =
           LocalStorage.getItem("Image");
+        cardTMP[this.route.params.id].cards[this.route.params.index].audio =
+          LocalStorage.getItem("Audio");
         LocalStorage.set("DECK", cardTMP);
         this.router.go(-1);
       }

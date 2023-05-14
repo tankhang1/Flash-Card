@@ -35,8 +35,18 @@
           icon="fa-solid fa-file-audio"
           color="primary"
           round
-          @click="onAudio"
+          @click="playAudio"
         />
+        <!-- <q-icon name="fa-solid fa-file-audio" color="primary" size="25px" /> -->
+        <div class="q-pa-md">
+          <q-file
+            v-model="files"
+            label="Pick files audio"
+            style="width: 150px"
+            accept=".mp3"
+            @input="onAudio"
+          />
+        </div>
       </div>
       <div class="row items-center q-pt-md">
         <div style="font-size: 16px; margin-right: 10px">Camera</div>
@@ -48,6 +58,8 @@
           @click="showDialog = true"
         />
       </div>
+      <!-- AUDIO -->
+      <audio ref="audioPlayer" :src="audioFile"></audio>
       <!-- CAMERA -->
       <div v-show="activeCamera">
         <div
@@ -98,7 +110,6 @@
       </div>
     </q-page-container>
   </q-page>
-
   <!-- MODAL OPTION CAMERA -->
   <q-dialog v-model="showDialog" position="bottom">
     <q-card>
@@ -145,10 +156,16 @@
 import { LocalStorage } from "quasar";
 
 import { useRoute, useRouter } from "vue-router";
+import { ref } from "vue";
 export default {
   name: "NewCard",
   props: {
     id: Object,
+  },
+  setup() {
+    return {
+      files: ref(null),
+    };
   },
   data() {
     return {
@@ -163,10 +180,12 @@ export default {
       router: useRouter(),
       activeCamera: false,
       imageCapture: false,
+      audioFile: "",
     };
   },
   mounted() {
     LocalStorage.set("Image", "");
+    LocalStorage.set("Audio", "");
   },
 
   methods: {
@@ -174,8 +193,19 @@ export default {
       if (this.activeCamera) return true;
       return false;
     },
-    onAudio() {
+    onAudio(file) {
       //console.log("Audio");
+      var reader = new FileReader();
+      reader.onload = (event) => {
+        LocalStorage.set("Audio", reader.result);
+        this.audioFile = reader.result;
+      };
+      reader.readAsDataURL(file.target.files[0]);
+    },
+    playAudio() {
+      if (this.audioFile !== "") {
+        this.$refs.audioPlayer.play();
+      }
     },
     onAddNewCard() {
       if (this.vocabulary === "") {
@@ -195,7 +225,7 @@ export default {
           isStar: false,
           isChecked: false,
           image: LocalStorage.getItem("Image"),
-          audio: "",
+          audio: LocalStorage.getItem("Audio"),
         };
         data[index].cards = [...data[index].cards, card];
         LocalStorage.set("DECK", data);
@@ -238,6 +268,7 @@ export default {
       this.activeCamera = true;
       //this.initCamera();
     },
+
     captureImageFallBack(file) {
       let canvas = this.$refs.canvas;
       let context = canvas.getContext("2d");

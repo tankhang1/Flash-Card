@@ -19,6 +19,9 @@
         >{{ this.indexCard }}/{{ this.numberCards }}</h
       >
     </div>
+    <!-- AUDIO -->
+    <audio ref="audioPlayer" :src="this.CARD[this.indexCard - 1].audio"></audio>
+    <!-- DIALOG -->
     <q-dialog
       v-model="showExit"
       transition-show="rotate"
@@ -110,7 +113,7 @@
               icon="volume_up"
               color="primary"
               size="15px"
-              @click="onTest"
+              @click="playAudio"
               v-if="this.DATA_FRONT.Audio"
             />
             <q-btn
@@ -198,7 +201,7 @@
               icon="volume_up"
               color="primary"
               size="15px"
-              @click="onTest"
+              @click="playAudio"
               v-if="this.DATA_BACK.Audio"
             />
             <q-btn
@@ -485,9 +488,10 @@ export default defineComponent({
     changeShowFront() {
       this.showFront = !this.showFront;
     },
-    onTest() {
-      console.log(this.CARD[this.indexCard - 1].isStar);
-      console.log(this.DATA_CARD);
+    playAudio() {
+      if (this.CARD[this.indexCard - 1].audio !== "") {
+        this.$refs.audioPlayer.play();
+      }
     },
     checkStar() {
       this.CARD[this.indexCard - 1].isStar =

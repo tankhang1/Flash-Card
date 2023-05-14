@@ -134,6 +134,8 @@
         </q-card-section>
       </q-card>
     </q-page-container>
+    <!-- AUDIO -->
+    <audio ref="audioPlayer" :src="audioFile"></audio>
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -154,6 +156,7 @@ export default {
       card: {},
       checkCard: false,
       router: useRouter(),
+      audioFile: "",
     };
   },
   mounted() {
@@ -161,11 +164,15 @@ export default {
     this.card = cardTMP[this.route.params.id].cards[this.route.params.index];
     this.checkCard =
       cardTMP[this.route.params.id].cards[this.route.params.index].isStar;
+    this.audioFile =
+      cardTMP[this.route.params.id].cards[this.route.params.index].audio;
   },
   methods: {
     audioClick() {
-      console.log(this.eachCardOption);
       console.log("Click Audio");
+      if (this.audioFile !== "") {
+        this.$refs.audioPlayer.play();
+      }
     },
     starClick() {
       this.checkCard = !this.checkCard;
