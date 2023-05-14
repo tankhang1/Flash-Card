@@ -72,94 +72,199 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <div v-touch-swipe.mouse="handleSwipe" v-if="this.CARD.length !== 0">
-      <q-card
-        bordered
-        style="
-          width: 80%;
-          min-height: 500px;
-          margin-left: auto;
-          margin-right: auto;
-          margin-top: 25px;
-        "
+    <div
+      v-touch-swipe.mouse="handleSwipe"
+      v-if="this.CARD.length !== 0"
+      style="
+        min-height: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 25px;
+        width: 80%;
+      "
+    >
+      <transition-group
+        mode="out-in"
+        appear
+        enter-active-class="animated flipOutX slow"
+        leave-active-class="animated flipOutX slow"
       >
-        <q-card-section
-          horizontal
-          style="display: flexbox; align-items: center"
+        <!-- FRONT -->
+        <q-card
+          bordered
+          style="position: absolute; min-height: 500px; width: 80%"
+          v-if="showFront"
         >
-          <div
+          <q-card-section
+            horizontal
             style="
-              color: #7286d3;
-              margin-left: auto;
-              margin-right: auto;
-              margin-top: 10px;
-            "
-            class="text-h6"
-          >
-            {{
-              !showCard
-                ? CARD[indexCard - 1].font.name
-                : CARD[indexCard - 1].back.name
-            }}
-          </div>
-          <q-btn
-            flat
-            round
-            style="
-              color: #fdda0d;
-              position: absolute;
-              right: 10px;
-              margin-top: 10px;
-            "
-            :color="CARD[indexCard - 1].isStar ? 'yellow' : 'grey'"
-            icon="star"
-            size="large"
-            @click="checkStar()"
-          />
-        </q-card-section>
-        <q-separator
-          dark
-          style="
-            margin-bottom: 10px;
-            margin-top: 10px;
-            background-color: hsl(0, 0%, 90%);
-          "
-        />
-        <div @click="showCard = !showCard">
-          <q-card-section style="font-size: 16px" v-if="!showCard">
-            <q-img
-              v-if="CARD[indexCard - 1].font.image !== ''"
-              :src="CARD[indexCard - 1].font.image"
-              width="100%"
-              height="50%"
-            />
-            <p style="margin-top: 10px">
-              {{ CARD[indexCard - 1].font.description }}
-            </p>
-          </q-card-section>
-          <q-card-section style="font-size: 16px" v-else>
-            <q-img
-              v-if="CARD[indexCard - 1].back.image !== ''"
-              :src="CARD[indexCard - 1].back.image"
-              width="100%"
-              height="50%"
-            />
-            {{ CARD[indexCard - 1].back.description }}
-          </q-card-section>
-          <div
-            style="
-              position: absolute;
-              bottom: 10px;
-              justify-content: center;
               display: flex;
+              align-items: center;
+              justify-content: flex-end;
               width: 100%;
-              color: #a3a3a3;
             "
           >
-            Tap to flip it
-          </div>
-        </div>
-      </q-card>
+            <q-btn
+              flat
+              round
+              icon="volume_up"
+              color="primary"
+              size="15px"
+              @click="onTest"
+              v-if="this.DATA_FRONT.Audio"
+            />
+            <q-btn
+              flat
+              round
+              icon="star"
+              :color="CARD[indexCard - 1].isStar ? 'yellow' : 'grey'"
+              size="15px"
+              @click="checkStar"
+              style="margin-left: auto"
+            />
+          </q-card-section>
+
+          <q-card-section
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-direction: column;
+              min-height: 450px;
+            "
+            clickable
+            @click="changeShowFront"
+          >
+            <div
+              style="color: #7286d3; font-size: 25px"
+              v-if="this.DATA_FRONT.Vocabulary"
+            >
+              {{ CARD[indexCard - 1].vocabulary }}
+            </div>
+            <div style="font-size: 18px" v-if="this.DATA_FRONT.Pronunciation">
+              {{ CARD[indexCard - 1].pronunciation }}
+            </div>
+            <q-img
+              v-if="CARD[indexCard - 1].image !== '' && this.DATA_FRONT.Image"
+              :src="CARD[indexCard - 1].image"
+              width="100%"
+              height="200px"
+              fit="contain"
+            />
+            <div
+              style="font-size: 15px; width: 90%"
+              v-if="this.DATA_FRONT.Meaning"
+            >
+              {{ CARD[indexCard - 1].meaning }}
+            </div>
+            <div
+              style="font-size: 15px; width: 90%; margin-top: 20px"
+              v-if="this.DATA_FRONT.Example"
+            >
+              {{ CARD[indexCard - 1].example }}
+            </div>
+            <div
+              style="
+                position: absolute;
+                bottom: 10px;
+                justify-content: center;
+                display: flex;
+                width: 100%;
+                color: #a3a3a3;
+              "
+            >
+              Tap to flip it
+            </div>
+          </q-card-section>
+        </q-card>
+        <!-- BACK -->
+        <q-card
+          bordered
+          style="position: absolute; min-height: 500px; width: 80%"
+          v-if="!showFront"
+        >
+          <q-card-section
+            horizontal
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: flex-end;
+              width: 100%;
+            "
+          >
+            <q-btn
+              flat
+              round
+              icon="volume_up"
+              color="primary"
+              size="15px"
+              @click="onTest"
+              v-if="this.DATA_BACK.Audio"
+            />
+            <q-btn
+              flat
+              round
+              icon="star"
+              :color="CARD[indexCard - 1].isStar ? 'yellow' : 'grey'"
+              size="15px"
+              @click="checkStar"
+              style="margin-left: auto"
+            />
+          </q-card-section>
+          <q-card-section
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-direction: column;
+              min-height: 450px;
+            "
+            clickable
+            @click="changeShowFront"
+          >
+            <div
+              style="color: #7286d3; font-size: 25px"
+              v-if="this.DATA_BACK.Vocabulary"
+            >
+              {{ CARD[indexCard - 1].vocabulary }}
+            </div>
+            <div style="font-size: 18px" v-if="this.DATA_BACK.Pronunciation">
+              {{ CARD[indexCard - 1].pronunciation }}
+            </div>
+            <q-img
+              v-if="CARD[indexCard - 1].image !== '' && this.DATA_BACK.Image"
+              :src="CARD[indexCard - 1].image"
+              width="100%"
+              height="200px"
+              fit="contain"
+            />
+            <div
+              style="font-size: 15px; width: 90%"
+              v-if="this.DATA_BACK.Meaning"
+            >
+              {{ CARD[indexCard - 1].meaning }}
+            </div>
+            <div
+              style="font-size: 15px; width: 90%; margin-top: 20px"
+              v-if="this.DATA_BACK.Example"
+            >
+              {{ CARD[indexCard - 1].example }}
+            </div>
+            <div
+              style="
+                position: absolute;
+                bottom: 10px;
+                justify-content: center;
+                display: flex;
+                width: 100%;
+                color: #a3a3a3;
+              "
+            >
+              Tap to flip it
+            </div>
+          </q-card-section>
+        </q-card>
+      </transition-group>
     </div>
     <div
       style="
@@ -217,13 +322,14 @@ export default defineComponent({
   },
   data() {
     return {
-      showCard: false,
       showExit: false,
+      showCard: false,
       route: useRoute(),
       router: useRouter(),
       numberCards: 0,
-
       indexDeck: 0,
+      DATA_FRONT: [],
+      DATA_BACK: [],
       CARD: [
         {
           id: "",
@@ -261,46 +367,41 @@ export default defineComponent({
         },
       ],
       indexCard: 1,
+      showFront: true,
     };
   },
   mounted() {
-    console.log(this.route.params.front);
     let data = LocalStorage.getItem("DECK");
     if (this.route.params.type === "All") {
       this.indexDeck = this.route.params.index;
       this.numberCards = data[this.indexDeck].cards.length;
       this.CARD = [...data[this.indexDeck].cards];
-
-      console.log("all", this.CARD);
+      this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
+      this.DATA_BACK = JSON.parse(this.route.params.DataBack);
     } else if (this.route.params.type === "Not Learnt") {
       this.indexDeck = this.route.params.index;
       this.numberCards = data[this.indexDeck].cards.filter(
         (item) => item.isChecked !== true
       ).length;
-
       this.CARD = [...data[this.indexDeck].cards].filter(
         (item) => item.isChecked !== true
       );
-
-      if (this.CARD.length === 0) {
-        //   this.router.go(-1);
-      }
+      this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
+      this.DATA_BACK = JSON.parse(this.route.params.DataBack);
     } else if (this.route.params.type === "Favorite") {
       this.indexDeck = this.route.params.index;
       this.numberCards = data[this.indexDeck].cards.filter(
         (item) => item.isStar === true
       ).length;
-      if (this.route.params.front === 1) {
-        this.showCard = false;
-      } else {
-        this.showCard = true;
-      }
-
       this.CARD = [...data[this.indexDeck].cards].filter(
         (item) => item.isStar === true
       );
+      this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
+      this.DATA_BACK = JSON.parse(this.route.params.DataBack);
     } else if (this.route.params.type === "Random_5") {
       this.indexDeck = this.route.params.index;
+      this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
+      this.DATA_BACK = JSON.parse(this.route.params.DataBack);
       if (data[this.indexDeck].cards.length > 5) {
         this.numberCards = 5;
         let tmp = [];
@@ -323,6 +424,8 @@ export default defineComponent({
       }
     } else if (this.route.params.type === "Random_10") {
       this.indexDeck = this.route.params.index;
+      this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
+      this.DATA_BACK = JSON.parse(this.route.params.DataBack);
       if (data[this.indexDeck].cards.length > 10) {
         this.numberCards = 10;
         let tmp = [];
@@ -345,6 +448,8 @@ export default defineComponent({
       }
     } else if (this.route.params.type === "Option") {
       this.indexDeck = this.route.params.index;
+      this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
+      this.DATA_BACK = JSON.parse(this.route.params.DataBack);
       let numberOption = this.route.params.numberOption;
       if (data[this.indexDeck].cards.length > numberOption) {
         this.numberCards = numberOption;
@@ -367,11 +472,6 @@ export default defineComponent({
         this.CARD = [...data[this.indexDeck].cards];
       }
     }
-    if (this.route.params.front === "0") {
-      this.showCard = false;
-    } else {
-      this.showCard = true;
-    }
     this.DATA_CARD = [...data[this.indexDeck].cards];
     if (this.CARD.length >= 1) {
       this.CARD[0].isChecked = true;
@@ -382,13 +482,21 @@ export default defineComponent({
     }
   },
   methods: {
+    changeShowFront() {
+      this.showFront = !this.showFront;
+    },
+    onTest() {
+      console.log(this.CARD[this.indexCard - 1].isStar);
+      console.log(this.DATA_CARD);
+    },
     checkStar() {
       this.CARD[this.indexCard - 1].isStar =
         !this.CARD[this.indexCard - 1].isStar;
       let index = this.DATA_CARD.findIndex(
         (item) => item.id === this.CARD[this.indexCard - 1].id
       );
-      this.DATA_CARD[index].isStar = !this.DATA_CARD[index].isStar;
+      //this.DATA_CARD[index].isStar = this.CARD[this.indexCard - 1].isStar;
+      this.DATA_CARD[index].isStar = this.DATA_CARD[index].isStar;
     },
     cancelClick() {
       this.showExit = !this.showExit;
@@ -430,6 +538,8 @@ export default defineComponent({
         name: "ResultPage",
         params: {
           indexDeck: this.indexDeck,
+          DataFront: JSON.stringify(this.DATA_FRONT),
+          DataBack: JSON.stringify(this.DATA_BACK),
         },
       });
     },

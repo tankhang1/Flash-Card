@@ -108,7 +108,7 @@ export default defineComponent({
   },
   mounted() {
     let listDeck = LocalStorage.getAll();
-    console.log(listDeck);
+    //console.log(listDeck);
     if (listDeck.DECK?.length !== 0) this.DECK = listDeck.DECK;
   },
   updated() {

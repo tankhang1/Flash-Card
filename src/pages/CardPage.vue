@@ -63,6 +63,7 @@
         hide-icon
         color="primary"
         @click="onStartLearning"
+        :disable="checkStarting()"
         style="
           padding: 10px 30px 10px 30px;
           font-size: 15px;
@@ -131,11 +132,12 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <!-- DIALOG 4 OPTIONS -->
+    <!-- DIALOG 6 OPTIONS -->
+    <!-- FRONT -->
     <q-dialog
-      v-model="openLearning_4"
+      v-model="openLearning_6_Front"
       transition-show="rotate"
-      transition-hide="rotate"
+      transition-hide="fade"
     >
       <q-card class="my-card">
         <q-card-section>
@@ -148,30 +150,106 @@
               text-align: center;
             "
           >
-            How do you want to learn?
+            Which of the following do you want to show on the front of the card?
           </div>
         </q-card-section>
-
         <q-card-actions vertical>
-          <q-btn flat no-caps style="font-size: 16px" @click="frontToBack"
-            >Front to Back</q-btn
+          <div
+            v-for="(_, key) in DATA_FRONT"
+            :key="key"
+            style="margin-left: 10px"
           >
-          <q-separator />
-          <q-btn flat no-caps style="font-size: 16px" @click="backToFront"
-            >Back to Front</q-btn
-          >
-          <q-separator />
-          <q-btn flat no-caps style="font-size: 16px" @click="onRandom"
-            >Random</q-btn
-          >
-          <q-separator />
+            <q-checkbox
+              v-model="DATA_FRONT[key]"
+              :label="key"
+              style="font-size: 16px"
+            />
+          </div>
+        </q-card-actions>
+        <q-card-actions
+          horizontal
+          style="
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            flex-direction: row;
+            align-items: center;
+          "
+        >
           <q-btn
             flat
-            style="color: #eb3223; font-size: 16px"
+            label="Cancel"
             no-caps
-            @click="openLearning_4 = !openLearning_4"
-            >Cancel</q-btn
+            style="color: #eb3223; font-size: 16px; width: 48.5%"
+            @click="onCancel"
+          />
+          <q-btn
+            flat
+            label="OK"
+            no-caps
+            style="color: #09a506; font-size: 16px; width: 48.5%"
+            @click="onOKFront"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <!-- BACK -->
+    <q-dialog
+      v-model="openLearning_6_Back"
+      transition-show="slide-left"
+      transition-hide="fade"
+    >
+      <q-card class="my-card">
+        <q-card-section>
+          <div
+            class="text-h6"
+            style="
+              color: #7286d3;
+              font-size: 16px;
+              font-weight: 600;
+              text-align: center;
+            "
           >
+            Which of the following do you want to show on the back of the card?
+          </div>
+        </q-card-section>
+        <q-card-actions vertical v-show="typeFront === 0">
+          <div
+            v-for="(_, key) in DATA_BACK"
+            :key="key"
+            style="margin-left: 10px"
+          >
+            <q-checkbox
+              v-model="DATA_BACK[key]"
+              :label="key"
+              style="font-size: 16px"
+            />
+          </div>
+        </q-card-actions>
+        <q-card-actions
+          horizontal
+          style="
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            flex-direction: row;
+            align-items: center;
+          "
+        >
+          <q-btn
+            flat
+            label="Cancel"
+            no-caps
+            style="color: #eb3223; font-size: 16px; width: 48.5%"
+            @click="onCancel"
+          />
+          <q-btn
+            flat
+            label="OK"
+            no-caps
+            style="color: #09a506; font-size: 16px; width: 48.5%"
+            @click="onOKBack"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -356,6 +434,23 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <!-- ALERT ERROR -->
+    <q-dialog v-model="alertError">
+      <q-card class="my-card">
+        <q-card-section>
+          <div style="color: #7286d3; font-size: 18px; text-align: center">
+            There are no suitable cards
+          </div>
+        </q-card-section>
+        <q-btn
+          flat
+          label="OK"
+          no-caps
+          style="color: #7286d3; font-size: 16px; width: 100%"
+          @click="alertError = false"
+        />
+      </q-card>
+    </q-dialog>
     <!-- ALERT DELETE -->
     <q-dialog v-model="alertDelete">
       <q-card class="my-card">
@@ -497,7 +592,7 @@
 import { LocalStorage } from "quasar";
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
-
+import { ref } from "vue";
 export default defineComponent({
   name: "CardPage",
   props: {
@@ -514,13 +609,10 @@ export default defineComponent({
   data() {
     return {
       openLearning_7: false,
-      openLearning_4: false,
       openOption: false,
       txtCard: "",
       newDeckName: "",
       dataDeck: [],
-      isFront: 0,
-      numberCards: 0,
       numberOption: 0,
       //
       router: useRouter(),
@@ -531,6 +623,26 @@ export default defineComponent({
       indexDeck: 0,
       indexClick: 0,
       eachCardOption: false,
+      openLearning_6_Front: false,
+      openLearning_6_Back: false,
+      typeFront: 0, // 0: front, 1: back
+      DATA_FRONT: {
+        Vocabulary: ref(false),
+        Pronunciation: ref(false),
+        Audio: ref(false),
+        Image: ref(false),
+        Meaning: ref(false),
+        Example: ref(false),
+      },
+      DATA_BACK: {
+        Vocabulary: ref(false),
+        Pronunciation: ref(false),
+        Audio: ref(false),
+        Image: ref(false),
+        Meaning: ref(false),
+        Example: ref(false),
+      },
+      alertError: false,
     };
   },
   mounted() {
@@ -575,14 +687,28 @@ export default defineComponent({
       });
       LocalStorage.set("DECK", data);
     },
+    checkStarting() {
+      if (this.CARD.length === 0) return true;
+      return false;
+    },
+    onCancel() {
+      this.openLearning_6_Front = false;
+      this.openLearning_6_Back = false;
+    },
     onStartLearning() {
-      //this.openLearning_4 = !this.openLearning_4;
-      console.log("start learning");
+      this.openLearning_6_Front = !this.openLearning_6_Front;
+    },
+    onOKFront() {
+      this.openLearning_6_Front = !this.openLearning_6_Front;
+      this.openLearning_6_Back = !this.openLearning_6_Back;
+    },
+    onOKBack() {
+      this.openLearning_6_Back = false;
+      this.openLearning_7 = true;
     },
     onOption() {
       this.openOption = !this.openOption;
     },
-
     deleteCancle() {
       this.checkDelete = false;
     },
@@ -599,100 +725,91 @@ export default defineComponent({
         params: { id: this.$route.params.id },
       });
     },
-    frontToBack() {
-      this.openLearning_7 = !this.openLearning_7;
-      this.isFront = 0;
-    },
-    backToFront() {
-      this.openLearning_7 = !this.openLearning_7;
-      this.isFront = 1;
-    },
-    onRandom() {
-      this.openLearning_7 = !this.openLearning_7;
-      this.isFront = Math.floor(Math.random() * 1);
-    },
     allCard() {
       this.openLearning_7 = !this.openLearning_7;
-      this.openLearning_4 = !this.openLearning_7;
-      // this.indexDeck = this.route.params.index;
-      // this.numberCards = data[this.indexDeck].cards.length;
-      // this.isFront = this.route.params.front;
-
-      // this.CARD = [...data[this.indexDeck].cards];
       this.router.push({
         name: "LearningPage",
         params: {
           index: this.indexDeck,
-          front: this.isFront,
-
           type: "All",
           numberOption: this.numberOption,
+          DataFront: JSON.stringify(this.DATA_FRONT),
+          DataBack: JSON.stringify(this.DATA_BACK),
         },
       });
     },
     onNotLearn() {
       this.openLearning_7 = !this.openLearning_7;
-      this.openLearning_4 = !this.openLearning_7;
-
+      const TMP = this.CARD.filter((c) => c.isChecked === false);
+      if (TMP.length === 0) {
+        this.alertError = true;
+        return;
+      }
       this.router.push({
         name: "LearningPage",
         params: {
           index: this.indexDeck,
-          front: this.isFront,
           type: "Not Learnt",
           numberOption: this.numberOption,
+          DataFront: JSON.stringify(this.DATA_FRONT),
+          DataBack: JSON.stringify(this.DATA_BACK),
         },
       });
     },
     onFavorite() {
       this.openLearning_7 = !this.openLearning_7;
-      this.openLearning_4 = !this.openLearning_7;
-      this.router.push({
-        name: "LearningPage",
-        params: {
-          index: this.indexDeck,
-          front: this.isFront,
-          type: "Favorite",
-          numberOption: this.numberOption,
-        },
-      });
+      const TMP = this.CARD.filter((c) => c.isStar === true);
+      if (TMP.length === 0) {
+        this.alertError = true;
+      } else {
+        this.router.push({
+          name: "LearningPage",
+          params: {
+            index: this.indexDeck,
+            type: "Favorite",
+            numberOption: this.numberOption,
+            DataFront: JSON.stringify(this.DATA_FRONT),
+            DataBack: JSON.stringify(this.DATA_BACK),
+          },
+        });
+      }
     },
     onRandom_5() {
       this.openLearning_7 = !this.openLearning_7;
-      this.openLearning_4 = !this.openLearning_7;
       this.router.push({
         name: "LearningPage",
         params: {
           index: this.indexDeck,
-          front: this.isFront,
           type: "Random_5",
           numberOption: this.numberOption,
+          DataFront: JSON.stringify(this.DATA_FRONT),
+          DataBack: JSON.stringify(this.DATA_BACK),
         },
       });
     },
     onRandom_10() {
       this.openLearning_7 = !this.openLearning_7;
-      this.openLearning_4 = !this.openLearning_7;
       this.router.push({
         name: "LearningPage",
         params: {
           index: this.indexDeck,
-          front: this.isFront,
           type: "Random_10",
           numberOption: this.numberOption,
+          DataFront: JSON.stringify(this.DATA_FRONT),
+          DataBack: JSON.stringify(this.DATA_BACK),
         },
       });
     },
     onMoveOption() {
       this.openLearning_7 = !this.openLearning_7;
-      this.openLearning_4 = !this.openLearning_7;
       this.router.push({
         name: "LearningPage",
         params: {
           index: this.indexDeck,
-          front: this.isFront,
           type: "Option",
           numberOption: this.numberOption,
+          DataFront: JSON.stringify(this.DATA_FRONT),
+          DataBack: JSON.stringify(this.DATA_BACK),
         },
       });
     },

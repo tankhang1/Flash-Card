@@ -104,7 +104,6 @@ export default defineComponent({
     let data = LocalStorage.getItem("DECK");
     this.currentCard = data[this.indexDeck].complete;
     this.numberCard = data[this.indexDeck].cards.length;
-    console.log(data);
   },
   methods: {
     reStartAllCard() {
@@ -112,9 +111,10 @@ export default defineComponent({
         name: "LearningPage",
         params: {
           index: this.indexDeck,
-          front: Math.floor(Math.random()),
           type: "All",
           numberOption: 0,
+          DataFront: this.route.params.DataFront,
+          DataBack: this.route.params.DataBack,
         },
       });
     },
@@ -123,9 +123,10 @@ export default defineComponent({
         name: "LearningPage",
         params: {
           index: this.indexDeck,
-          front: Math.floor(Math.random()),
           type: "Not Learnt",
           numberOption: 0,
+          DataFront: this.route.params.DataFront,
+          DataBack: this.route.params.DataBack,
         },
       });
     },
