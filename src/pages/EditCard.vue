@@ -39,6 +39,7 @@
         />
         <!-- <q-icon name="fa-solid fa-file-audio" color="primary" size="25px" /> -->
         <div class="q-pa-md">
+          <div>{{ fileName }}</div>
           <q-file
             v-model="files"
             label="Pick files audio"
@@ -168,6 +169,7 @@ export default {
   setup() {
     return {
       files: ref(null),
+      fileName: ref("hate"),
     };
   },
   data() {
@@ -203,6 +205,7 @@ export default {
     if (this.card.image !== "") {
       this.haveImage = true;
     } else this.haveImage = false;
+    console.log(this.audioFile.name); // object
     LocalStorage.set("Image", this.card.image);
     LocalStorage.set("Audio", this.card.audio);
   },
@@ -213,11 +216,13 @@ export default {
       return false;
     },
     onAudio(file) {
-      //console.log("Audio");
       var reader = new FileReader();
       reader.onload = (event) => {
-        LocalStorage.set("Audio", reader.result);
-        this.audioFile = reader.result;
+        const dataUrl = reader.result;
+        const fileName = file.target.files[0].name;
+        LocalStorage.set("Audio", dataUrl);
+        this.audioFile = dataUrl;
+        this.fileName = fileName;
       };
       reader.readAsDataURL(file.target.files[0]);
     },

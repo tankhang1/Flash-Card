@@ -31,8 +31,9 @@
     </div>
 
     <q-btn
-      @click="reStartUndoneCard"
-      label="Restart Undone Cards"
+      @click="reStartNeedPractice"
+      label="Restart cards that need practice"
+      :disable="practiceDisabled()"
       style="
         background-color: #7286d3;
         color: white;
@@ -118,6 +119,23 @@ export default defineComponent({
         },
       });
     },
+    reStartNeedPractice() {
+      this.router.push({
+        name: "LearningPage",
+        params: {
+          index: this.indexDeck,
+          type: "Need Practice",
+          numberOption: 0,
+          DataFront: this.route.params.DataFront,
+          DataBack: this.route.params.DataBack,
+          needPractice: this.route.params.needPractice,
+        },
+      });
+    },
+    practiceDisabled() {
+      console.log(this.route.params.needPractice);
+      return this.route.params.needPractice === "[]";
+    },
     reStartUndoneCard() {
       this.router.push({
         name: "LearningPage",
@@ -127,6 +145,7 @@ export default defineComponent({
           numberOption: 0,
           DataFront: this.route.params.DataFront,
           DataBack: this.route.params.DataBack,
+          needPractice: this.route.params.needPractice,
         },
       });
     },

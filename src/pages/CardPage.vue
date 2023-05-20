@@ -642,6 +642,7 @@ export default defineComponent({
         Meaning: ref(false),
         Example: ref(false),
       },
+      needPractice: [],
       alertError: false,
     };
   },
@@ -685,6 +686,7 @@ export default defineComponent({
       this.CARD.forEach((element) => {
         element.isChecked = false;
       });
+      data[this.indexDeck].complete = 0;
       LocalStorage.set("DECK", data);
     },
     checkStarting() {
@@ -735,6 +737,7 @@ export default defineComponent({
           numberOption: this.numberOption,
           DataFront: JSON.stringify(this.DATA_FRONT),
           DataBack: JSON.stringify(this.DATA_BACK),
+          needPractice: JSON.stringify([...this.needPractice]), // spread the array to create a new one
         },
       });
     },
@@ -753,6 +756,7 @@ export default defineComponent({
           numberOption: this.numberOption,
           DataFront: JSON.stringify(this.DATA_FRONT),
           DataBack: JSON.stringify(this.DATA_BACK),
+          needPractice: JSON.stringify([...this.needPractice]), // spread the array to create a new one
         },
       });
     },
@@ -770,6 +774,7 @@ export default defineComponent({
             numberOption: this.numberOption,
             DataFront: JSON.stringify(this.DATA_FRONT),
             DataBack: JSON.stringify(this.DATA_BACK),
+            needPractice: JSON.stringify([...this.needPractice]), // spread the array to create a new one
           },
         });
       }
@@ -784,6 +789,7 @@ export default defineComponent({
           numberOption: this.numberOption,
           DataFront: JSON.stringify(this.DATA_FRONT),
           DataBack: JSON.stringify(this.DATA_BACK),
+          needPractice: JSON.stringify([...this.needPractice]), // spread the array to create a new one
         },
       });
     },
@@ -797,6 +803,7 @@ export default defineComponent({
           numberOption: this.numberOption,
           DataFront: JSON.stringify(this.DATA_FRONT),
           DataBack: JSON.stringify(this.DATA_BACK),
+          needPractice: JSON.stringify([...this.needPractice]), // spread the array to create a new one
         },
       });
     },
@@ -810,6 +817,7 @@ export default defineComponent({
           numberOption: this.numberOption,
           DataFront: JSON.stringify(this.DATA_FRONT),
           DataBack: JSON.stringify(this.DATA_BACK),
+          needPractice: JSON.stringify([...this.needPractice]), // spread the array to create a new one
         },
       });
     },

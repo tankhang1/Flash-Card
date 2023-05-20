@@ -77,7 +77,6 @@
     </q-dialog>
     <div
       v-touch-swipe.mouse="handleSwipe"
-      v-if="this.CARD.length !== 0"
       style="
         min-height: 500px;
         margin-left: auto;
@@ -284,7 +283,7 @@
       <q-btn
         label="Save"
         no-caps
-        @click="onSave"
+        @click="onNeedPractice"
         style="
           background-color: #f78c4f;
           color: white;
@@ -333,6 +332,7 @@ export default defineComponent({
       indexDeck: 0,
       DATA_FRONT: [],
       DATA_BACK: [],
+      needPractice: [],
       CARD: [
         {
           id: "",
@@ -381,6 +381,7 @@ export default defineComponent({
       this.CARD = [...data[this.indexDeck].cards];
       this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
       this.DATA_BACK = JSON.parse(this.route.params.DataBack);
+      this.needPractice = JSON.parse(this.route.params.needPractice);
     } else if (this.route.params.type === "Not Learnt") {
       this.indexDeck = this.route.params.index;
       this.numberCards = data[this.indexDeck].cards.filter(
@@ -391,6 +392,7 @@ export default defineComponent({
       );
       this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
       this.DATA_BACK = JSON.parse(this.route.params.DataBack);
+      this.needPractice = JSON.parse(this.route.params.needPractice);
     } else if (this.route.params.type === "Favorite") {
       this.indexDeck = this.route.params.index;
       this.numberCards = data[this.indexDeck].cards.filter(
@@ -401,10 +403,13 @@ export default defineComponent({
       );
       this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
       this.DATA_BACK = JSON.parse(this.route.params.DataBack);
+      this.needPractice = JSON.parse(this.route.params.needPractice);
     } else if (this.route.params.type === "Random_5") {
       this.indexDeck = this.route.params.index;
       this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
       this.DATA_BACK = JSON.parse(this.route.params.DataBack);
+      this.needPractice = JSON.parse(this.route.params.needPractice);
+
       if (data[this.indexDeck].cards.length > 5) {
         this.numberCards = 5;
         let tmp = [];
@@ -429,6 +434,8 @@ export default defineComponent({
       this.indexDeck = this.route.params.index;
       this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
       this.DATA_BACK = JSON.parse(this.route.params.DataBack);
+      this.needPractice = JSON.parse(this.route.params.needPractice);
+
       if (data[this.indexDeck].cards.length > 10) {
         this.numberCards = 10;
         let tmp = [];
@@ -453,6 +460,8 @@ export default defineComponent({
       this.indexDeck = this.route.params.index;
       this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
       this.DATA_BACK = JSON.parse(this.route.params.DataBack);
+      this.needPractice = JSON.parse(this.route.params.needPractice);
+
       let numberOption = this.route.params.numberOption;
       if (data[this.indexDeck].cards.length > numberOption) {
         this.numberCards = numberOption;
@@ -474,6 +483,20 @@ export default defineComponent({
         this.numberCards = data[this.indexDeck].cards.length;
         this.CARD = [...data[this.indexDeck].cards];
       }
+    } else if (this.route.params.type === "Need Practice") {
+      console.log("PRACT");
+      this.indexDeck = this.route.params.index;
+      this.numberCards = data[this.indexDeck].cards.filter((item) =>
+        this.route.params.needPractice.includes(item.id)
+      ).length;
+      console.log(this.route.params.needPractice);
+
+      this.CARD = data[this.indexDeck].cards.filter((item) =>
+        this.route.params.needPractice.includes(item.id)
+      );
+      this.DATA_FRONT = JSON.parse(this.route.params.DataFront);
+      this.DATA_BACK = JSON.parse(this.route.params.DataBack);
+      this.needPractice = [];
     }
     this.DATA_CARD = [...data[this.indexDeck].cards];
     if (this.CARD.length >= 1) {
@@ -527,6 +550,9 @@ export default defineComponent({
         }
       }
     },
+    onNeedPractice() {
+      this.needPractice.push(this.CARD[this.indexCard - 1].id);
+    },
     onSave() {
       let data = LocalStorage.getItem("DECK");
       data[this.indexDeck].cards = [...this.DATA_CARD];
@@ -541,9 +567,11 @@ export default defineComponent({
       this.router.push({
         name: "ResultPage",
         params: {
+          needPractice: this.needPractice,
           indexDeck: this.indexDeck,
           DataFront: JSON.stringify(this.DATA_FRONT),
           DataBack: JSON.stringify(this.DATA_BACK),
+          needPractice: JSON.stringify(this.needPractice),
         },
       });
     },
