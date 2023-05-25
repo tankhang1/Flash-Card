@@ -47,7 +47,7 @@
       no-caps
     />
     <q-btn
-      label="Restart All Cards"
+      label="Restart Not Done Cards"
       style="
         background-color: #7286d3;
         color: white;
@@ -58,7 +58,7 @@
         margin-right: auto;
         display: flex;
       "
-      @click="reStartAllCard"
+      @click="reStartUndoneCard"
       no-caps
     />
     <q-btn

@@ -30,13 +30,18 @@
       <q-input v-model="example" outlined dense class="q-mt-md" autogrow />
       <div class="row items-center q-pt-xl">
         <div style="font-size: 16px; margin-right: 10px">Audio</div>
-        <q-btn
-          flat
-          icon="fa-solid fa-file-audio"
-          color="primary"
-          round
-          @click="playAudio"
-        />
+        <div class="audio-container">
+          <q-btn
+            flat
+            icon="fa-solid fa-file-audio"
+            color="primary"
+            round
+            @click="playAudio"
+          />
+          <div class="q-typography-caption">
+            {{ audioFileName }}
+          </div>
+        </div>
         <!-- <q-icon name="fa-solid fa-file-audio" color="primary" size="25px" /> -->
         <div class="q-pa-md">
           <q-file
@@ -50,13 +55,18 @@
       </div>
       <div class="row items-center q-pt-md">
         <div style="font-size: 16px; margin-right: 10px">Camera</div>
-        <q-btn
-          flat
-          icon="camera_alt"
-          color="primary"
-          round
-          @click="showDialog = true"
-        />
+        <div class="audio-container">
+          <q-btn
+            flat
+            icon="camera_alt"
+            color="primary"
+            round
+            @click="showDialog = true"
+          />
+          <div class="q-typography-caption">
+            {{ imageFileName }}
+          </div>
+        </div>
       </div>
       <!-- AUDIO -->
       <audio ref="audioPlayer" :src="audioFile"></audio>
@@ -181,6 +191,8 @@ export default {
       activeCamera: false,
       imageCapture: false,
       audioFile: "",
+      audioFileName: "",
+      imageFileName: "",
     };
   },
   mounted() {
@@ -199,10 +211,13 @@ export default {
       reader.onload = (event) => {
         LocalStorage.set("Audio", reader.result);
         this.audioFile = reader.result;
+        this.audioFileName = file.target.files[0].name;
       };
       reader.readAsDataURL(file.target.files[0]);
+      console.log(file.target.files[0].name);
     },
     playAudio() {
+      console.log(this.files.name);
       if (this.audioFile !== "") {
         this.$refs.audioPlayer.play();
       }
@@ -213,6 +228,7 @@ export default {
       } else {
         this.showAlert = false;
         const data = [...LocalStorage.getItem("DECK")];
+        this.disableCamera();
         const index = data.findIndex(
           (value) => String(value.id) === this.route.params.id
         );
@@ -226,6 +242,8 @@ export default {
           isChecked: false,
           image: LocalStorage.getItem("Image"),
           audio: LocalStorage.getItem("Audio"),
+          audioName: this.audioFileName,
+          imageName: this.imageFileName,
         };
         data[index].cards = [...data[index].cards, card];
         LocalStorage.set("DECK", data);
@@ -270,6 +288,7 @@ export default {
     },
 
     captureImageFallBack(file) {
+      this.imageFileName = file.target.files[0].name;
       let canvas = this.$refs.canvas;
       let context = canvas.getContext("2d");
       var reader = new FileReader();
@@ -332,5 +351,19 @@ export default {
 .separator {
   margin: 5;
   height: 0px;
+}
+.audio-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 10vh; /* Optional: Adjust the height as needed */
+}
+
+.q-typography-caption {
+  width: 10vh;
+  white-space: nowrap;
+  overflow: scroll;
+  text-overflow: initial;
 }
 </style>

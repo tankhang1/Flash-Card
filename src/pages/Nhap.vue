@@ -152,7 +152,7 @@
 import { ref } from "vue";
 
 export default {
-  name: "qwdq",
+  name: "NhapCard",
   data() {
     return {
       showDialogFont: false,

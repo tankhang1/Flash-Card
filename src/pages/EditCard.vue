@@ -30,16 +30,21 @@
       <q-input v-model="example" outlined dense class="q-mt-md" autogrow />
       <div class="row items-center q-pt-xl">
         <div style="font-size: 16px; margin-right: 10px">Audio</div>
-        <q-btn
-          flat
-          icon="fa-solid fa-file-audio"
-          color="primary"
-          round
-          @click="playAudio"
-        />
+        <div class="audio-container">
+          <q-btn
+            flat
+            icon="fa-solid fa-file-audio"
+            color="primary"
+            round
+            @click="playAudio"
+          />
+          <div class="q-typography-caption">
+            {{ audioFileName }}
+          </div>
+        </div>
+
         <!-- <q-icon name="fa-solid fa-file-audio" color="primary" size="25px" /> -->
         <div class="q-pa-md">
-          <div>{{ fileName }}</div>
           <q-file
             v-model="files"
             label="Pick files audio"
@@ -51,13 +56,18 @@
       </div>
       <div class="row items-center q-pt-md">
         <div style="font-size: 16px; margin-right: 10px">Camera</div>
-        <q-btn
-          flat
-          icon="camera_alt"
-          color="primary"
-          round
-          @click="showDialog = true"
-        />
+        <div class="audio-container">
+          <q-btn
+            flat
+            icon="camera_alt"
+            color="primary"
+            round
+            @click="showDialog = true"
+          />
+          <div class="q-typography-caption">
+            {{ imageFileName }}
+          </div>
+        </div>
       </div>
       <!-- CAMERA -->
       <div v-show="activeCamera || haveImage">
@@ -169,7 +179,6 @@ export default {
   setup() {
     return {
       files: ref(null),
-      fileName: ref("hate"),
     };
   },
   data() {
@@ -189,6 +198,8 @@ export default {
       image: "",
       haveImage: false,
       audioFile: "",
+      audioFileName: "",
+      imageFileName: "",
     };
   },
   mounted() {
@@ -202,10 +213,12 @@ export default {
     this.example = this.card.example;
     this.image = this.card.image;
     this.audioFile = this.card.audio;
+    this.audioFileName = this.card.audioName;
+    this.imageFileName = this.card.imageName;
     if (this.card.image !== "") {
       this.haveImage = true;
     } else this.haveImage = false;
-    console.log(this.audioFile.name); // object
+    console.log(this.audioFileName); // object
     LocalStorage.set("Image", this.card.image);
     LocalStorage.set("Audio", this.card.audio);
   },
@@ -219,10 +232,10 @@ export default {
       var reader = new FileReader();
       reader.onload = (event) => {
         const dataUrl = reader.result;
-        const fileName = file.target.files[0].name;
+        const audioFileName = file.target.files[0].name;
         LocalStorage.set("Audio", dataUrl);
         this.audioFile = dataUrl;
-        this.fileName = fileName;
+        this.audioFileName = audioFileName;
       };
       reader.readAsDataURL(file.target.files[0]);
     },
@@ -263,6 +276,10 @@ export default {
           LocalStorage.getItem("Image");
         cardTMP[this.route.params.id].cards[this.route.params.index].audio =
           LocalStorage.getItem("Audio");
+        cardTMP[this.route.params.id].cards[this.route.params.index].audioName =
+          this.audioFileName;
+        cardTMP[this.route.params.id].cards[this.route.params.index].imageName =
+          this.imageFileName;
         LocalStorage.set("DECK", cardTMP);
         this.router.go(-1);
       }
@@ -307,6 +324,7 @@ export default {
       }
     },
     captureImageFallBack(file) {
+      this.imageFileName = file.target.files[0].name;
       let canvas = this.$refs.canvas;
       let context = canvas.getContext("2d");
       var reader = new FileReader();
@@ -370,5 +388,24 @@ export default {
 .separator {
   margin: 5;
   height: 0px;
+}
+.filename {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.audio-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: fit-content; /* Optional: Adjust the height as needed */
+  width: 10vh;
+}
+.q-typography-caption {
+  width: 10vh;
+  white-space: nowrap;
+  overflow: scroll;
+  text-overflow: unset;
 }
 </style>
