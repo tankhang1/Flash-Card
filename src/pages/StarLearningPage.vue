@@ -281,7 +281,7 @@
       "
     >
       <q-btn
-        label="Save"
+        label="Need Practice"
         no-caps
         @click="onNeedPractice"
         style="
@@ -484,12 +484,11 @@ export default defineComponent({
         this.CARD = [...data[this.indexDeck].cards];
       }
     } else if (this.route.params.type === "Need Practice") {
-      console.log("PRACT");
       this.indexDeck = this.route.params.index;
       this.numberCards = data[this.indexDeck].cards.filter((item) =>
         this.route.params.needPractice.includes(item.id)
       ).length;
-      console.log(this.route.params.needPractice);
+      //console.log(this.route.params.needPractice);
 
       this.CARD = data[this.indexDeck].cards.filter((item) =>
         this.route.params.needPractice.includes(item.id)

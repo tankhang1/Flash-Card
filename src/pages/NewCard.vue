@@ -228,7 +228,7 @@ export default {
       } else {
         this.showAlert = false;
         const data = [...LocalStorage.getItem("DECK")];
-        this.disableCamera();
+        //this.disableCamera();
         const index = data.findIndex(
           (value) => String(value.id) === this.route.params.id
         );
@@ -248,6 +248,7 @@ export default {
         data[index].cards = [...data[index].cards, card];
         LocalStorage.set("DECK", data);
         this.router.go(-1);
+        console.log("AA");
       }
     },
     imageData() {

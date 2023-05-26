@@ -120,34 +120,39 @@ export default defineComponent({
       });
     },
     reStartNeedPractice() {
-      this.router.push({
-        name: "LearningPage",
-        params: {
-          index: this.indexDeck,
-          type: "Need Practice",
-          numberOption: 0,
-          DataFront: this.route.params.DataFront,
-          DataBack: this.route.params.DataBack,
-          needPractice: this.route.params.needPractice,
-        },
-      });
+      console.log(JSON.parse(this.route.params.needPractice).length);
+      if (JSON.parse(this.route.params.needPractice).length !== 0) {
+        this.router.push({
+          name: "LearningPage",
+          params: {
+            index: this.indexDeck,
+            type: "Need Practice",
+            numberOption: 0,
+            DataFront: this.route.params.DataFront,
+            DataBack: this.route.params.DataBack,
+            needPractice: this.route.params.needPractice,
+          },
+        });
+      }
     },
     practiceDisabled() {
       console.log(this.route.params.needPractice);
       return this.route.params.needPractice === "[]";
     },
     reStartUndoneCard() {
-      this.router.push({
-        name: "LearningPage",
-        params: {
-          index: this.indexDeck,
-          type: "Not Learnt",
-          numberOption: 0,
-          DataFront: this.route.params.DataFront,
-          DataBack: this.route.params.DataBack,
-          needPractice: this.route.params.needPractice,
-        },
-      });
+      if (this.currentCard !== this.numberCard) {
+        this.router.push({
+          name: "LearningPage",
+          params: {
+            index: this.indexDeck,
+            type: "Not Learnt",
+            numberOption: 0,
+            DataFront: this.route.params.DataFront,
+            DataBack: this.route.params.DataBack,
+            needPractice: this.route.params.needPractice,
+          },
+        });
+      }
     },
   },
 });
