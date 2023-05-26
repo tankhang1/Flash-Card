@@ -48,6 +48,7 @@
     />
     <q-btn
       label="Restart Not Done Cards"
+      :disable="disableUnDone()"
       style="
         background-color: #7286d3;
         color: white;
@@ -136,7 +137,9 @@ export default defineComponent({
       }
     },
     practiceDisabled() {
-      console.log(this.route.params.needPractice);
+      return this.currentCard === this.numberCard;
+    },
+    disableUnDone() {
       return this.route.params.needPractice === "[]";
     },
     reStartUndoneCard() {
