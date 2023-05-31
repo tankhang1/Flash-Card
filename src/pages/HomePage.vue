@@ -23,7 +23,12 @@
         class="item-style shadow-4 q-pa-md q-my-md"
         v-for="(item, index) in DECK"
         :key="index"
-        :to="{ name: 'CardPage', params: { id: item.id } }"
+        :to="{
+          name: 'CardPage',
+          params: {
+            id: item.id,
+          },
+        }"
       >
         <q-item-section>
           <q-item-label class="text-weight-bold text-subtitle1">{{
@@ -94,6 +99,127 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <!-- SETTING -->
+  <!-- FRONT -->
+  <q-dialog v-model="openFront" transition-show="rotate" transition-hide="fade">
+    <q-card class="my-card">
+      <q-card-section>
+        <div
+          class="text-h6"
+          style="
+            color: #7286d3;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+          "
+        >
+          SETTING FOR ALL DECKS<br />
+          Which of the following do you want to show on the front of cards in
+          all decks ?
+        </div>
+      </q-card-section>
+      <q-card-actions vertical>
+        <div
+          v-for="(_, key) in DefaultFront"
+          :key="key"
+          style="margin-left: 10px"
+        >
+          <q-checkbox
+            v-model="DefaultFront[key]"
+            :label="key"
+            style="font-size: 16px"
+          />
+        </div>
+      </q-card-actions>
+      <q-card-actions
+        horizontal
+        style="
+          width: 100%;
+          display: flex;
+          justify-content: space-around;
+          flex-direction: row;
+          align-items: center;
+        "
+      >
+        <q-btn
+          flat
+          label="Cancel"
+          no-caps
+          style="color: #eb3223; font-size: 16px; width: 48.5%"
+          @click="onSetting"
+        />
+        <q-btn
+          flat
+          label="OK"
+          no-caps
+          style="color: #09a506; font-size: 16px; width: 48.5%"
+          @click="onOKFront"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <!-- BACK -->
+  <q-dialog
+    v-model="openBack"
+    transition-show="slide-left"
+    transition-hide="fade"
+  >
+    <q-card class="my-card">
+      <q-card-section>
+        <div
+          class="text-h6"
+          style="
+            color: #7286d3;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+          "
+        >
+          SETTING FOR ALL DECKS<br />
+          Which of the following do you want to show on the back of cards in all
+          decks ?
+        </div>
+      </q-card-section>
+      <q-card-actions vertical>
+        <div
+          v-for="(_, key) in DefaultBack"
+          :key="key"
+          style="margin-left: 10px"
+        >
+          <q-checkbox
+            v-model="DefaultBack[key]"
+            :label="key"
+            style="font-size: 16px"
+          />
+        </div>
+      </q-card-actions>
+      <q-card-actions
+        horizontal
+        style="
+          width: 100%;
+          display: flex;
+          justify-content: space-around;
+          flex-direction: row;
+          align-items: center;
+        "
+      >
+        <q-btn
+          flat
+          label="Cancel"
+          no-caps
+          style="color: #eb3223; font-size: 16px; width: 48.5%"
+          @click="openBack = false"
+        />
+        <q-btn
+          flat
+          label="OK"
+          no-caps
+          style="color: #09a506; font-size: 16px; width: 48.5%"
+          @click="onOKBack"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
@@ -113,12 +239,34 @@ export default defineComponent({
     return {
       txt_modal: "",
       DECK: [],
+      DefaultFront: {
+        Vocabulary: ref(false),
+        Pronunciation: ref(false),
+        Audio: ref(false),
+        Image: ref(false),
+        Meaning: ref(false),
+        Example: ref(false),
+      },
+      DefaultBack: {
+        Vocabulary: ref(false),
+        Pronunciation: ref(false),
+        Audio: ref(false),
+        Image: ref(false),
+        Meaning: ref(false),
+        Example: ref(false),
+      },
+      openFront: false,
+      openBack: false,
     };
   },
   mounted() {
     let listDeck = LocalStorage.getAll();
     //console.log(listDeck);
     if (listDeck.DECK?.length !== 0) this.DECK = listDeck.DECK;
+    let tmpFront = LocalStorage.getItem("DefaultFront");
+    let tmpBack = LocalStorage.getItem("DefaultBack");
+    if (tmpFront) this.DefaultFront = { ...tmpFront };
+    if (tmpBack) this.DefaultBack = { ...tmpBack };
   },
   updated() {
     let listDeck = LocalStorage.getAll();
@@ -126,7 +274,17 @@ export default defineComponent({
   },
   methods: {
     onSetting() {
-      console.log("setting");
+      //console.log("setting");
+      this.openFront = !this.openFront;
+    },
+    onOKFront() {
+      this.openFront = false;
+      this.openBack = true;
+      LocalStorage.set("DefaultFront", this.DefaultFront);
+    },
+    onOKBack() {
+      this.openBack = false;
+      LocalStorage.set("DefaultBack", this.DefaultBack);
     },
     onCancel() {
       this.txt_modal = "";
