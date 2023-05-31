@@ -4,7 +4,16 @@
     <!-- Header -->
     <q-header class="bg-primary header">
       <q-toolbar>
+        <q-btn flat round dense icon="none" class="q-mr-sm" />
         <q-toolbar-title class="title-header">Home</q-toolbar-title>
+        <q-btn
+          flat
+          round
+          dense
+          icon="settings"
+          class="q-mr-sm"
+          @click="onSetting"
+        />
       </q-toolbar>
     </q-header>
     <!-- Body -->
@@ -116,8 +125,8 @@ export default defineComponent({
     if (listDeck.DECK?.length !== 0) this.DECK = listDeck.DECK;
   },
   methods: {
-    navigateToCard(item, index) {
-      console.log(index);
+    onSetting() {
+      console.log("setting");
     },
     onCancel() {
       this.txt_modal = "";
@@ -143,7 +152,7 @@ export default defineComponent({
 
         //this.DECK.push(newCard);
         this.txt_modal = "";
-        console.log(LocalStorage.getAll());
+        //console.log(LocalStorage.getAll());
       }
     },
   },
