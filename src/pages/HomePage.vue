@@ -307,10 +307,8 @@ export default defineComponent({
           console.log(data);
           LocalStorage.set("DECK", [...data, newCard]);
         }
-
         //this.DECK.push(newCard);
         this.txt_modal = "";
-        //console.log(LocalStorage.getAll());
       }
     },
   },
