@@ -28,9 +28,19 @@
       <q-input v-model="meaning" outlined dense class="q-mt-md" autogrow />
       <div class="text-subtitle1 q-pt-md">Example</div>
       <q-input v-model="example" outlined dense class="q-mt-md" autogrow />
-      <div class="row items-center q-pt-xl">
+      <div class="row items-center q-pt-md">
         <div style="font-size: 16px; margin-right: 10px">Audio</div>
-        <div class="audio-container">
+        <div class="audio-container" style="position: relative">
+          <div style="position: absolute; top: 1px; right: 1px">
+            <q-btn
+              flat
+              icon="close"
+              color="red"
+              round
+              @click="onRemoveAudio"
+              v-show="haveAudio"
+            />
+          </div>
           <q-btn
             flat
             icon="fa-solid fa-file-audio"
@@ -53,9 +63,9 @@
           />
         </div>
       </div>
-      <div class="row items-center q-pt-md">
+      <div class="row items-center q-pt-sm">
         <div style="font-size: 16px; margin-right: 10px">Camera</div>
-        <div class="audio-container">
+        <div class="audio-container" style="position: relative; height: 5vh">
           <q-btn
             flat
             icon="camera_alt"
@@ -193,6 +203,7 @@ export default {
       audioFile: "",
       audioFileName: "",
       imageFileName: "",
+      haveAudio: false,
     };
   },
   mounted() {
@@ -212,6 +223,7 @@ export default {
         LocalStorage.set("Audio", reader.result);
         this.audioFile = reader.result;
         this.audioFileName = file.target.files[0].name;
+        if (this.audioFile != "") this.haveAudio = true;
       };
       reader.readAsDataURL(file.target.files[0]);
       console.log(file.target.files[0].name);
@@ -312,6 +324,11 @@ export default {
         track.stop();
       });
     },
+    onRemoveAudio() {
+      this.audioFileName = "";
+      LocalStorage.set("Audio", "");
+      this.haveAudio = false;
+    },
     dataURItoBlob(dataURI) {
       // convert base64 to raw binary data held in a string
       // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
@@ -353,18 +370,23 @@ export default {
   margin: 5;
   height: 0px;
 }
+.filename {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .audio-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 10vh; /* Optional: Adjust the height as needed */
+  height: 16vh; /* Optional: Adjust the height as needed */
+  width: 10vh;
 }
-
 .q-typography-caption {
   width: 10vh;
   white-space: nowrap;
   overflow: scroll;
-  text-overflow: initial;
+  text-overflow: unset;
 }
 </style>
