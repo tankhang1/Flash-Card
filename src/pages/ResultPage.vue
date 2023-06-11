@@ -121,7 +121,7 @@ export default defineComponent({
       });
     },
     reStartNeedPractice() {
-      console.log(JSON.parse(this.route.params.needPractice).length);
+      //console.log(JSON.parse(this.route.params.needPractice).length);
       if (JSON.parse(this.route.params.needPractice).length !== 0) {
         this.router.push({
           name: "LearningPage",
@@ -136,10 +136,10 @@ export default defineComponent({
         });
       }
     },
-    practiceDisabled() {
+    disableUnDone() {
       return this.currentCard === this.numberCard;
     },
-    disableUnDone() {
+    practiceDisabled() {
       return this.route.params.needPractice === "[]";
     },
     reStartUndoneCard() {

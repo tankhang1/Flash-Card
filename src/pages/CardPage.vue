@@ -76,6 +76,38 @@
         >Start Learning</q-btn
       >
     </q-page-sticky>
+    <!-- OPTIONS SETTING -->
+    <q-dialog
+      v-model="openOptionSetting"
+      transition-show="rotate"
+      transition-hide="fade"
+    >
+      <q-card class="my-card">
+        <q-card-section>
+          <div
+            class="text-h6"
+            style="
+              color: #7286d3;
+              font-size: 16px;
+              font-weight: 600;
+              text-align: center;
+            "
+          >
+            Setting content for Front & Back of the card
+          </div>
+        </q-card-section>
+
+        <q-card-actions vertical>
+          <q-btn flat no-caps style="font-size: 16px" @click="DefaultSetting"
+            >Use default setting</q-btn
+          >
+          <q-separator />
+          <q-btn flat no-caps style="font-size: 16px" @click="CustomizeSetting"
+            >Use customize setting</q-btn
+          >
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <!-- DIALOG 7 OPTIONS -->
     <q-dialog
       v-model="openLearning_7"
@@ -644,6 +676,10 @@ export default defineComponent({
       },
       needPractice: [],
       alertError: false,
+      DefaultFront: [],
+      DefaultBack: [],
+      openOptionSetting: false,
+      isDefault: false,
     };
   },
   mounted() {
@@ -656,6 +692,8 @@ export default defineComponent({
     this.txtCard = this.dataDeck.name;
     //this.CARD = data[index].cards ?? [];
     this.CARD = data[index].cards;
+    this.DefaultFront = LocalStorage.getItem("DefaultFront");
+    this.DefaultBack = LocalStorage.getItem("DefaultBack");
   },
 
   methods: {
@@ -698,6 +736,22 @@ export default defineComponent({
       this.openLearning_6_Back = false;
     },
     onStartLearning() {
+      if (
+        !Object.values(this.DefaultFront).includes(true) &&
+        !Object.values(this.DefaultBack).includes(true)
+      ) {
+        this.openLearning_6_Front = !this.openLearning_6_Front;
+      } else {
+        this.openOptionSetting = !this.openOptionSetting;
+      }
+    },
+    DefaultSetting() {
+      this.openOptionSetting = false;
+      this.openLearning_7 = true;
+      this.isDefault = true;
+    },
+    CustomizeSetting() {
+      this.openOptionSetting = false;
       this.openLearning_6_Front = !this.openLearning_6_Front;
     },
     onOKFront() {
@@ -735,8 +789,12 @@ export default defineComponent({
           index: this.indexDeck,
           type: "All",
           numberOption: this.numberOption,
-          DataFront: JSON.stringify(this.DATA_FRONT),
-          DataBack: JSON.stringify(this.DATA_BACK),
+          DataFront: this.isDefault
+            ? JSON.stringify(this.DefaultFront)
+            : JSON.stringify(this.DATA_FRONT),
+          DataBack: this.isDefault
+            ? JSON.stringify(this.DefaultBack)
+            : JSON.stringify(this.DATA_BACK),
           needPractice: JSON.stringify([...this.needPractice]), // spread the array to create a new one
         },
       });
@@ -754,8 +812,12 @@ export default defineComponent({
           index: this.indexDeck,
           type: "Not Learnt",
           numberOption: this.numberOption,
-          DataFront: JSON.stringify(this.DATA_FRONT),
-          DataBack: JSON.stringify(this.DATA_BACK),
+          DataFront: this.isDefault
+            ? JSON.stringify(this.DefaultFront)
+            : JSON.stringify(this.DATA_FRONT),
+          DataBack: this.isDefault
+            ? JSON.stringify(this.DefaultBack)
+            : JSON.stringify(this.DATA_BACK),
           needPractice: JSON.stringify([...this.needPractice]), // spread the array to create a new one
         },
       });
@@ -772,8 +834,12 @@ export default defineComponent({
             index: this.indexDeck,
             type: "Favorite",
             numberOption: this.numberOption,
-            DataFront: JSON.stringify(this.DATA_FRONT),
-            DataBack: JSON.stringify(this.DATA_BACK),
+            DataFront: this.isDefault
+              ? JSON.stringify(this.DefaultFront)
+              : JSON.stringify(this.DATA_FRONT),
+            DataBack: this.isDefault
+              ? JSON.stringify(this.DefaultBack)
+              : JSON.stringify(this.DATA_BACK),
             needPractice: JSON.stringify([...this.needPractice]), // spread the array to create a new one
           },
         });
@@ -787,8 +853,12 @@ export default defineComponent({
           index: this.indexDeck,
           type: "Random_5",
           numberOption: this.numberOption,
-          DataFront: JSON.stringify(this.DATA_FRONT),
-          DataBack: JSON.stringify(this.DATA_BACK),
+          DataFront: this.isDefault
+            ? JSON.stringify(this.DefaultFront)
+            : JSON.stringify(this.DATA_FRONT),
+          DataBack: this.isDefault
+            ? JSON.stringify(this.DefaultBack)
+            : JSON.stringify(this.DATA_BACK),
           needPractice: JSON.stringify([...this.needPractice]), // spread the array to create a new one
         },
       });
@@ -801,8 +871,12 @@ export default defineComponent({
           index: this.indexDeck,
           type: "Random_10",
           numberOption: this.numberOption,
-          DataFront: JSON.stringify(this.DATA_FRONT),
-          DataBack: JSON.stringify(this.DATA_BACK),
+          DataFront: this.isDefault
+            ? JSON.stringify(this.DefaultFront)
+            : JSON.stringify(this.DATA_FRONT),
+          DataBack: this.isDefault
+            ? JSON.stringify(this.DefaultBack)
+            : JSON.stringify(this.DATA_BACK),
           needPractice: JSON.stringify([...this.needPractice]), // spread the array to create a new one
         },
       });
@@ -815,8 +889,12 @@ export default defineComponent({
           index: this.indexDeck,
           type: "Option",
           numberOption: this.numberOption,
-          DataFront: JSON.stringify(this.DATA_FRONT),
-          DataBack: JSON.stringify(this.DATA_BACK),
+          DataFront: this.isDefault
+            ? JSON.stringify(this.DefaultFront)
+            : JSON.stringify(this.DATA_FRONT),
+          DataBack: this.isDefault
+            ? JSON.stringify(this.DefaultBack)
+            : JSON.stringify(this.DATA_BACK),
           needPractice: JSON.stringify([...this.needPractice]), // spread the array to create a new one
         },
       });

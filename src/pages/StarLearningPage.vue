@@ -137,33 +137,35 @@
             clickable
             @click="changeShowFront"
           >
-            <div
-              style="color: #7286d3; font-size: 25px"
-              v-if="this.DATA_FRONT.Vocabulary"
-            >
-              {{ CARD[indexCard - 1].vocabulary }}
-            </div>
-            <div style="font-size: 18px" v-if="this.DATA_FRONT.Pronunciation">
-              {{ CARD[indexCard - 1].pronunciation }}
-            </div>
-            <q-img
-              v-if="CARD[indexCard - 1].image !== '' && this.DATA_FRONT.Image"
-              :src="CARD[indexCard - 1].image"
-              width="100%"
-              height="200px"
-              fit="contain"
-            />
-            <div
-              style="font-size: 15px; width: 90%"
-              v-if="this.DATA_FRONT.Meaning"
-            >
-              {{ CARD[indexCard - 1].meaning }}
-            </div>
-            <div
-              style="font-size: 15px; width: 90%; margin-top: 20px"
-              v-if="this.DATA_FRONT.Example"
-            >
-              {{ CARD[indexCard - 1].example }}
+            <div style="margin-top: -100px">
+              <div
+                style="color: #7286d3; font-size: 25px"
+                v-if="this.DATA_FRONT.Vocabulary"
+              >
+                {{ CARD[indexCard - 1].vocabulary }}
+              </div>
+              <div style="font-size: 18px" v-if="this.DATA_FRONT.Pronunciation">
+                {{ CARD[indexCard - 1].pronunciation }}
+              </div>
+              <q-img
+                v-if="CARD[indexCard - 1].image !== '' && this.DATA_FRONT.Image"
+                :src="CARD[indexCard - 1].image"
+                width="100%"
+                height="200px"
+                fit="contain"
+              />
+              <div
+                style="font-size: 15px; width: 90%"
+                v-if="this.DATA_FRONT.Meaning"
+              >
+                {{ CARD[indexCard - 1].meaning }}
+              </div>
+              <div
+                style="font-size: 15px; width: 90%; margin-top: 20px"
+                v-if="this.DATA_FRONT.Example"
+              >
+                {{ CARD[indexCard - 1].example }}
+              </div>
             </div>
             <div
               style="
@@ -224,33 +226,35 @@
             clickable
             @click="changeShowFront"
           >
-            <div
-              style="color: #7286d3; font-size: 25px"
-              v-if="this.DATA_BACK.Vocabulary"
-            >
-              {{ CARD[indexCard - 1].vocabulary }}
-            </div>
-            <div style="font-size: 18px" v-if="this.DATA_BACK.Pronunciation">
-              {{ CARD[indexCard - 1].pronunciation }}
-            </div>
-            <q-img
-              v-if="CARD[indexCard - 1].image !== '' && this.DATA_BACK.Image"
-              :src="CARD[indexCard - 1].image"
-              width="100%"
-              height="200px"
-              fit="contain"
-            />
-            <div
-              style="font-size: 15px; width: 90%"
-              v-if="this.DATA_BACK.Meaning"
-            >
-              {{ CARD[indexCard - 1].meaning }}
-            </div>
-            <div
-              style="font-size: 15px; width: 90%; margin-top: 20px"
-              v-if="this.DATA_BACK.Example"
-            >
-              {{ CARD[indexCard - 1].example }}
+            <div style="margin-top: -100px; width: 95%">
+              <div
+                style="color: #7286d3; font-size: 25px"
+                v-if="this.DATA_BACK.Vocabulary"
+              >
+                {{ CARD[indexCard - 1].vocabulary }}
+              </div>
+              <div style="font-size: 18px" v-if="this.DATA_BACK.Pronunciation">
+                {{ CARD[indexCard - 1].pronunciation }}
+              </div>
+              <q-img
+                v-if="CARD[indexCard - 1].image !== '' && this.DATA_BACK.Image"
+                :src="CARD[indexCard - 1].image"
+                width="100%"
+                height="200px"
+                fit="contain"
+              />
+              <div
+                style="font-size: 15px; width: 90%"
+                v-if="this.DATA_BACK.Meaning"
+              >
+                {{ CARD[indexCard - 1].meaning }}
+              </div>
+              <div
+                style="font-size: 15px; width: 90%; margin-top: 20px"
+                v-if="this.DATA_BACK.Example"
+              >
+                {{ CARD[indexCard - 1].example }}
+              </div>
             </div>
             <div
               style="
