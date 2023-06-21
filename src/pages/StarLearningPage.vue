@@ -137,14 +137,18 @@
             clickable
             @click="changeShowFront"
           >
-            <div style="margin-top: -100px">
+            <div style="margin-top: -100px; width: 100%">
               <div
-                style="color: #7286d3; font-size: 25px"
+                style="color: #7286d3; font-size: 25px; text-align: center"
                 v-if="this.DATA_FRONT.Vocabulary"
               >
                 {{ CARD[indexCard - 1].vocabulary }}
               </div>
-              <div style="font-size: 18px" v-if="this.DATA_FRONT.Pronunciation">
+
+              <div
+                style="font-size: 18px; text-align: center"
+                v-if="this.DATA_FRONT.Pronunciation"
+              >
                 {{ CARD[indexCard - 1].pronunciation }}
               </div>
               <q-img
@@ -158,12 +162,14 @@
                 style="font-size: 15px; width: 90%"
                 v-if="this.DATA_FRONT.Meaning"
               >
+                <span style="font-weight: bold">Meaning:</span>
                 {{ CARD[indexCard - 1].meaning }}
               </div>
               <div
                 style="font-size: 15px; width: 90%; margin-top: 20px"
                 v-if="this.DATA_FRONT.Example"
               >
+                <span style="font-weight: bold">Example:</span>
                 {{ CARD[indexCard - 1].example }}
               </div>
             </div>
@@ -247,12 +253,14 @@
                 style="font-size: 15px; width: 90%"
                 v-if="this.DATA_BACK.Meaning"
               >
+                <span style="font-weight: bold">Meaning:</span>
                 {{ CARD[indexCard - 1].meaning }}
               </div>
               <div
                 style="font-size: 15px; width: 90%; margin-top: 20px"
                 v-if="this.DATA_BACK.Example"
               >
+                <span style="font-weight: bold">Example:</span>
                 {{ CARD[indexCard - 1].example }}
               </div>
             </div>
